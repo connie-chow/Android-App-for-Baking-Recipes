@@ -16,4 +16,6 @@ public class TestStep {
         this.videoURL = videoURL;
         this.thumbnailURL = thumbnailURL;
     }
+
+    public String getS_id() { return s_id; }
 }
