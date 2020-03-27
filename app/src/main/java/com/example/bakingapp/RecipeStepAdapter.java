@@ -195,35 +195,40 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
             //https://stackoverflow.com/questions/2139134/how-to-send-an-object-from-one-android-activity-to-another-using-intents
             //We need to send the proper url for the image so that when the DetailActivity opens it has the proper image url
 
+            Intent i = new Intent(mContext, RecipeDetailActivity.class);
+            TestStep m = mSteps.get(getAdapterPosition());
+
             //Send now the movie object with the proper movie poster url
             //mMovieItemClicked.onMovieItemClicked(mMovies.get(getAdapterPosition()), this);
             if (v.findViewById(R.id.recipe_details_container) == null) {
-                Intent i = new Intent(mContext, RecipeDetailActivity.class);
-                TestStep m = mSteps.get(getAdapterPosition());
+
 
                 // Best practice design is to pass the id of the object we are navigating to instead
                 // of the whole object which is expensive
-                Intent id = i.putExtra("id", m.getS_id());
+                i.putExtra("id", m.getS_id());
 
-                mContext.startActivity(i);
+                //mContext.startActivity(i);
             } else {
                 // if two pane layout
                 // get view by id for recipe details and set the step id by bundle
 
                 // replace detail fragment
                 // if fragment exists, use Bundle to pass data
+                // https://stackoverflow.com/questions/4999991/what-is-a-bundle-in-an-android-application
+                // https://stackoverflow.com/questions/50378974/cannot-resolve-method-getsupportfragmentmanager
+                // Cannot invoke Fragment Manager in adapter...has to be done in am Activity extends FragmentActivity
+                // or AppCompatActivity
                 Bundle arguments = new Bundle();
-                arguments.putInt(RecipeDetailsFragment.step_id);
-                RecipeDetailsFragment fragment = new RecipeDetailsFragment();
-                fragment.setArguments(arguments);
+                arguments.putString("step_id", m.getS_id());
+                i.putExtras(arguments);
+                //https://stackoverflow.com/questions/768969/passing-a-bundle-on-startactivity
+                //https://stackoverflow.com/questions/35007764/pass-bundle-from-recycleview-adapter-to-activity
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.frag_recipe_details, fragment);
-                ft.addToBackStack(null);
-                ft.commit();
             }
 
+            if (v.findViewById(R.id.recipe_details_container) == null) {
+                mContext.startActivity(i);
+            }
         }
     }
 }

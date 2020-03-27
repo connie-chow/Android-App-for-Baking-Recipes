@@ -19,7 +19,30 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-/*
+
+        // Get incoming intent with bundle data, get Step ID to retrieve details
+        Intent i = getIntent();
+        String b = i.getExtras().getString("step_id");
+
+        // Pretend to get step details and step media
+        // Pass it to the fragment...
+        if (savedInstanceState == null) {
+
+// instantiate MovieDetailFragment and then take the Bundle data and set to the fragment
+            RecipeDetailsFragment fragment = new RecipeDetailsFragment();
+            Bundle arguments = new Bundle();
+
+            arguments.putString("step_id", b);
+            fragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction().add(R.id.frag_recipe_details, fragment).commit();
+        }
+
+
+
+
+        /*
+
         // Room Database access
         mDb = AppDatabase.getInstance(getApplicationContext());
 
@@ -64,11 +87,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
    */
-
-
-
-        Intent i = getIntent();
-        String s_id = i.getExtras().getString("id");
 
 
         // Instantiate Fragment Manager in charge of fragments associated with this Activity

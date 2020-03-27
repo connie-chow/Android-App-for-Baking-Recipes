@@ -31,6 +31,11 @@ public class RecipeDetailsFragment extends Fragment {
         TextView tv = (TextView) rootView.findViewById(R.id.recipe_details_txt);
         tv.setText("recipe step details: instructions...");
 
+        Bundle extras = getActivity().getIntent().getExtras();
+        String step_id = extras.getString("step_id");
+
+        tv.setText(step_id + step_id + step_id + step_id + step_id );
+
         // Return the rootView
         return rootView;
 /*
