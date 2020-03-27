@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Pair;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,10 +16,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-/*
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.movie_details);
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recipe_detail);
+/*
         // Room Database access
         mDb = AppDatabase.getInstance(getApplicationContext());
 
@@ -62,6 +64,26 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
    */
+
+
+
+        Intent i = getIntent();
+        String s_id = i.getExtras().getString("id");
+
+
+        // Instantiate Fragment Manager in charge of fragments associated with this Activity
+        // What is the concept behind a transaction and committing to it?
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        RecipeDetailsFragment recipeFragment = new RecipeDetailsFragment();
+        fragmentTransaction.add(R.id.recipe_details_container, recipeFragment).commit();
+
+        // https://stackoverflow.com/questions/14880746/difference-between-sw600dp-and-w600dp
+        // https://developer.android.com/guide/practices/screens_support.html
+        // https://stackoverflow.com/questions/16706076/different-resolution-support-android
+        // https://developer.android.com/training/multiscreen/screensizes
+
     }
 
 }

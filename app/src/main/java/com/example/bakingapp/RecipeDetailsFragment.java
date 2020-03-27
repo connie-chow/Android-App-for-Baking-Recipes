@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 
 public class RecipeDetailsFragment extends Fragment {
 
+    public static String step_id;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
@@ -27,7 +29,7 @@ public class RecipeDetailsFragment extends Fragment {
 
         // Get a reference to the ImageView in the fragment layout
         TextView tv = (TextView) rootView.findViewById(R.id.recipe_details_txt);
-        tv.setText("recipe details: instructions...");
+        tv.setText("recipe step details: instructions...");
 
         // Return the rootView
         return rootView;

@@ -6,6 +6,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -20,6 +25,7 @@ public class RecipeActivity extends AppCompatActivity {
 
 
         // Instantiate Fragment Manager in charge of fragments associated with this Activity
+        // What is the concept behind a transaction and committing to it?
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -42,5 +48,9 @@ public class RecipeActivity extends AppCompatActivity {
             RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
             fragmentManager.beginTransaction().add(R.id.recipe_details_container, recipeDetailsFragment).commit();
         }
+
+
+
+
     }
 }

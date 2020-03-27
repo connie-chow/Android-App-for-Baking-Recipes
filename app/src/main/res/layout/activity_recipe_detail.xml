@@ -9,4 +9,10 @@
         android:layout_height="180dp"
         android:scaleType="centerInside"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recipe Step details activity"
+        android:background="#a4c635"
+        />
 </LinearLayout>

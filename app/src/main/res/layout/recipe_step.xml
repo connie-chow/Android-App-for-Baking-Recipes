@@ -2,9 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="#ffffff">
+    <!-- Was setting steps to the adapter but only first step was being displayed
+    I had set layout_height and width = match_parent and when changed to wrap_content,
+    now all the steps show up...so why were they only showing the first line?  match_parent
+    meant that the recyclerview takes up how much space?
+    match_parent, the parent being fragment_recipe.xml's LinearLayout which has weight and
+    height set to match_parent also, whose parent is activity_recipe.xml is FrameLayout for the
+    recipe_container whose height is 180dp and width = match_parent
+    -->
 
     <TextView
         android:id="@+id/recipe_step"

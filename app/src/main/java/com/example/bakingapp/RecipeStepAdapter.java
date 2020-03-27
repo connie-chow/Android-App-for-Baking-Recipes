@@ -2,12 +2,15 @@ package com.example.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -141,18 +144,14 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
      */
     public class RecipeStepViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ImageView mRecipeThumbnail;
-        public TextView mRecipeName;
-        public TextView mStepservings;
+
+        public TextView mRecipeStep;
 
         // Constructor: Assign reference to grid element and set a click listener to it
         RecipeStepViewHolder(View itemView) {
             super(itemView);
-            mRecipeThumbnail = itemView.findViewById(R.id.recipe_image);
-            mRecipeThumbnail.setOnClickListener(this);
-            mRecipeName = itemView.findViewById(R.id.recipe_name);
-            mStepservings = itemView.findViewById(R.id.recipe_servings);
-
+            mRecipeStep = itemView.findViewById(R.id.recipe_step);
+            mRecipeStep.setOnClickListener(this);
         }
 
 
@@ -167,19 +166,25 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
             //String movie_url = "https://image.tmdb.org/t/p/w185/" + movie.getPoster_path();
             //Picasso.get().load(movie_url).into(mRecipeThumbnail);
             //https://github.com/square/picasso/issues/427
+            /*
             String url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
+             */
+            /*
             Glide.with(itemView)  //2
                     .load(url) //3
                     .centerCrop() //
                     .into(mRecipeThumbnail); //8
+
+             */
+
             /*
             .placeholder(R.drawable.ic_image_place_holder) //5
                     .error(R.drawable.ic_broken_image) //6
                     .fallback(R.drawable.ic_no_image) //7
              */
 
-            mRecipeName.setText("Peach Pie");
-            mStepservings.setText("8");
+            mRecipeStep.setText(recipe.description);
+
 
         }
 
@@ -192,16 +197,32 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
             //Send now the movie object with the proper movie poster url
             //mMovieItemClicked.onMovieItemClicked(mMovies.get(getAdapterPosition()), this);
+            if (v.findViewById(R.id.recipe_details_container) == null) {
+                Intent i = new Intent(mContext, RecipeDetailActivity.class);
+                TestStep m = mSteps.get(getAdapterPosition());
 
-            Intent i = new Intent(mContext, RecipeActivity.class);
-            TestStep m = mSteps.get(getAdapterPosition());
+                // Best practice design is to pass the id of the object we are navigating to instead
+                // of the whole object which is expensive
+                Intent id = i.putExtra("id", m.getS_id());
 
-            // Best practice design is to pass the id of the object we are navigating to instead
-            // of the whole object which is expensive
-            Intent id = i.putExtra("id", m.getS_id());
+                mContext.startActivity(i);
+            } else {
+                // if two pane layout
+                // get view by id for recipe details and set the step id by bundle
 
-            mContext.startActivity(i);
+                // replace detail fragment
+                // if fragment exists, use Bundle to pass data
+                Bundle arguments = new Bundle();
+                arguments.putInt(RecipeDetailsFragment.step_id);
+                RecipeDetailsFragment fragment = new RecipeDetailsFragment();
+                fragment.setArguments(arguments);
 
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.frag_recipe_details, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
 
         }
     }
