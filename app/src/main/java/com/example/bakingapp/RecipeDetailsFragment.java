@@ -24,15 +24,19 @@ public class RecipeDetailsFragment extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+// https://www.youtube.com/watch?v=jAZn-J1I8Eg
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
         // Get a reference to the ImageView in the fragment layout
         TextView tv = (TextView) rootView.findViewById(R.id.recipe_details_txt);
         tv.setText("recipe step details: instructions...");
 
+        // Get incoming step ID from RecipeActivity Fragment's Step Adapter
         Bundle extras = getActivity().getIntent().getExtras();
         String step_id = extras.getString("step_id");
+        //Bundle b = getArguments();
+        //String step_id = b.getString("step_id");
+
 
         tv.setText(step_id + step_id + step_id + step_id + step_id );
 

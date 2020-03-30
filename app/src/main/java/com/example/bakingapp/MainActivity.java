@@ -10,8 +10,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
+
+import com.example.bakingapp.model.Feed;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +28,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.bakingapp.RedditAPI.BASE_URL;
 
 
 // Main Screen containing the Recipe Cards
@@ -36,6 +47,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     RecipeCardAdapter mRecipeCardAdapter;
+    private static final String TAG = "MainActivity";
+    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +69,46 @@ public class MainActivity extends AppCompatActivity {
 
         FetchRecipesTask recipes = new FetchRecipesTask();
         recipes.execute();
+
+
+        // Retrofit2
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RedditAPI redditAPI = retrofit.create(RedditAPI.class);
+        Call <List<Feed>> call = redditAPI.loadRecipeData();
+
+        //https://stackoverflow.com/questions/24154917/retrofit-expected-begin-object-but-was-begin-array
+
+        call.enqueue(new Callback <List<Feed>>() {
+            @Override
+            public void onResponse(Call <List<Feed>> call, Response <List<Feed>> response) {
+                Log.d(TAG, "onResponse: Server Response: " + response.toString());
+                Log.d(TAG, "onResponse: received information: " + response.body().toString());
+
+                //List<Feed> childrenList = response.body().loadRecipeData();
+                /*
+                for (int i = 0; i < childrenList.size(); i++) {
+                    Log.d(TAG, "onResponse: \n" +
+                            "kind: " + childrenList.get(i).getKind() + "\n");
+                }
+                */
+
+            }
+
+            @Override
+            public void onFailure(Call <List<Feed>> call, Throwable t) {
+                Log.e(TAG, "onFailure: Something went wrong: " + t.getMessage());
+                Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 //https://stuff.mit.edu/afs/sipb/project/android/docs/training/multiscreen/screensizes.html
-
+//http://www.appstoremarketresearch.com/articles/android-tutorial-master-detail-flow/
     public static float convertPixelsToDp(float px, Context context){
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }

@@ -1,10 +1,13 @@
 package com.example.bakingapp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 public class RecipeFragment extends Fragment {
 
     RecipeStepAdapter mRecipeStepAdapter;
+    private Context globalContext = null;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
@@ -103,6 +107,36 @@ public class RecipeFragment extends Fragment {
     }
 
 
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+/*
+        // to be implemented
+        try {
+            activityCallback = (ButtonClickListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement ButtonClickListener");
+        }
+        */
+
+    }
+
+
+    ButtonClickListener activityCallback;
+
+    // to be implemented
+    public interface ButtonClickListener {
+        public void onButtonClick(int position, String text);
+        /*
+        Context context = getActivity().getApplicationContext();
+        CharSequence text = "Hello toast!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+        */
+    }
 
 }
 

@@ -13,6 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class RecipeActivity extends AppCompatActivity {
+        //extends FragmentActivity  {
+
+        //implements RecipeFragment.ButtonClickListener {
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,11 @@ public class RecipeActivity extends AppCompatActivity {
             RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
             fragmentManager.beginTransaction().add(R.id.recipe_details_container, recipeDetailsFragment).commit();
         }
+    }
 
 
-
-
+    // to be implemented
+    public void onButtonClick(String arg1, int arg2) {
+        // implement code for callback method
     }
 }

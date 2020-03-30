@@ -102,6 +102,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // https://stackoverflow.com/questions/16706076/different-resolution-support-android
         // https://developer.android.com/training/multiscreen/screensizes
 
+
+        //https://stackoverflow.com/questions/12739909/send-data-from-activity-to-fragment-in-android
+
     }
 
 }
