@@ -149,6 +149,7 @@ mRecipes.add(m);
         public ImageView mRecipeThumbnail;
         public TextView mRecipeName;
         public TextView mRecipeServings;
+        //private MainViewModel mViewModel;
 
         // Constructor: Assign reference to grid element and set a click listener to it
         RecipeCardViewHolder(View itemView) {
@@ -185,7 +186,13 @@ mRecipes.add(m);
 
             mRecipeName.setText("Peach Pie");
             mRecipeServings.setText("8");
+/*
+            // Get recipe card data via ViewModel
+            mViewModel = ViewModelProviders.of(this,
+                    new Factory(this.getApplication()))
+                    .get(MainViewModel.class);
 
+ */
         }
 
 

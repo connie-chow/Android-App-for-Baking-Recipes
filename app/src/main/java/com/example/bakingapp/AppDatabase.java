@@ -17,7 +17,7 @@ import static javax.xml.transform.OutputKeys.VERSION;
                 Ingredients.class,
                 Steps.class
         },
-        version = 1,
+        version = 3,  // must increase version every time schema has changed
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

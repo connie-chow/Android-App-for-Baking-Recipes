@@ -2,19 +2,23 @@ package com.example.bakingapp;
 
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "steps")
+@Entity(tableName = "steps", primaryKeys = {"r_id","s_id"})
 public class Steps {
 
     int getId;
 
-    @PrimaryKey
+    @ColumnInfo
     @NonNull
     private String s_id;
 
+    @ColumnInfo
+    @NonNull
     private String r_id; // recipe_id that the step belongs to
+
     private String shortDescription;
     private String description;
     private String videoURL;

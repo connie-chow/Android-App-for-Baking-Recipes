@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private AppDatabase mDb;
     private static final String TAG = "MainActivity";
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
-
+    private static final String LOG_TAG = AppDatabase.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +82,18 @@ public class MainActivity extends AppCompatActivity {
 
         RedditAPI redditAPI = retrofit.create(RedditAPI.class);
         Call <List<Feed>> call = redditAPI.loadRecipeData();
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        mDb.recipeDAO().deleteAllIngredients();
+        //mDb.recipeDAO().deleteAllSteps();
+        mDb.recipeDAO().deleteAll();
+
+        List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+        Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
+
+
+
+
+
 
         //https://stackoverflow.com/questions/24154917/retrofit-expected-begin-object-but-was-begin-array
 
@@ -106,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     String recipeId = recipe.getId();
 
                     Recipes recipe_card = new Recipes(recipeId, name, servings, image);
-                    mDb = AppDatabase.getInstance(getApplicationContext());
+
                     long room_id = mDb.recipeDAO().insertRecipe(recipe_card);
 
 
@@ -123,12 +135,16 @@ public class MainActivity extends AppCompatActivity {
                         String measure = item.getMeasure();
                         String quantity = item.getQuantity();
                         room_ingredients =  new Ingredients(
-                                recipe_id, recipe_id, quantity, measure, text
+                                recipe_id, Integer.toString(j), quantity, measure, text
                         );
                         long room_insert = mDb.recipeDAO().insertIngredients(room_ingredients);
+                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + "ingredient_id = " + j);
+                        Log.d(LOG_TAG, "insert return code: " + room_insert);
+                        List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+                        Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
                     }
                     List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
-
+                    Log.d(LOG_TAG, "FINAL totalIngredientsList.size(): " + totalIngredientsList.size());
 
 
                     ArrayList stepsList = recipe.getSteps();
@@ -146,9 +162,16 @@ public class MainActivity extends AppCompatActivity {
                         room_step = new Steps(
                                 recipe_id, id, shortDescription, description, videoURL, thumbnailURL
                         );
+
+
                         long room_insert_step = mDb.recipeDAO().insertSteps(room_step);
+                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + "step_id = " + id);
+                        Log.d(LOG_TAG, "insert return code: " + room_insert_step);
+                        List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
+                        Log.d(LOG_TAG, "totalStepsList.size(): " + totalStepsList.size());
                     }
                     List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
+                    Log.d(LOG_TAG, "totalStepsList.size(): " + totalStepsList.size());
 
                     // pass to adapter
                    // List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();

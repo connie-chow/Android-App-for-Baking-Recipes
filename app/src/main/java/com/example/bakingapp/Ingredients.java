@@ -2,19 +2,25 @@ package com.example.bakingapp;
 
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "ingredients")
+//https://stackoverflow.com/questions/47130307/how-to-make-composite-key-in-room-while-using-mvvm-in-android
+@Entity(tableName = "ingredients", primaryKeys = {"r_id","i_id"})
 public class Ingredients {
 
     int getId;
 
-    @PrimaryKey
+    @ColumnInfo
     @NonNull
     private String i_id;
 
+    @ColumnInfo
+    @NonNull
     private String r_id; // recipe id this ingredient belongs to
+
+
     private String quantity;
     private String measure;
     private String ingredient;
