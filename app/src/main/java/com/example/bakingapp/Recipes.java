@@ -16,8 +16,8 @@ public class Recipes {
 
     private String id;
     private String name;
-    private String ingredients;
-    private String steps;
+    //private Ingredients ingredients;
+    //private Steps steps;
     private String servings;
     private String image;
 
@@ -25,30 +25,33 @@ public class Recipes {
     public Recipes (
             String r_id,
             String name,
-            String ingredients,
-            String steps,
+            //Ingredients ingredients,
+            //Steps steps,
             String servings,
             String image) {
 
         this.r_id = r_id;
         this.name = name;
-        this.ingredients = ingredients;
-        this.steps = steps;
+        //this.ingredients = ingredients;
+        //this.steps = steps;
         this.servings = servings;
     }
 
 
     // Write/Read these private values
+    public String getR_id() { return r_id; }
     public String getId() { return r_id; }
     public String getName() { return name; }
-    public String getIngredients() { return ingredients; }
-    public String getSteps() { return steps; }
+    //public Ingredients getIngredients() { return ingredients; }
+    //public Steps getSteps() { return steps; }
     public String getServings() { return servings; }
+    public String getImage() { return image; }
 
+    public void setR_id(String r) { this.r_id = r; }
     public void setId(String s) { this.r_id = s; }
     public void setName(String s) { this.name = s; }
-    public void setIngredients(String s) { this.ingredients = s; }
-    public void setSteps(String s) { this.steps = s; }
+    //public void setIngredients(Ingredients s) { this.ingredients = s; }
+    //public void setSteps(Steps s) { this.steps = s; }
     public void setServings(String s) { this.servings = s; }
-
+    public void setImage(String m) { this.image = m; }
 }

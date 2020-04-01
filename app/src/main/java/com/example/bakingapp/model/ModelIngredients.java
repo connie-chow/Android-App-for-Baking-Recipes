@@ -3,7 +3,12 @@ package com.example.bakingapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Ingredients {
+public class ModelIngredients {
+
+    @SerializedName("id")
+    @Expose
+    private String id;
+
 
     @SerializedName("measure")
     @Expose
@@ -32,6 +37,14 @@ public class Ingredients {
 
     public String getQuantity() {
         return quantity;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getMeasure() {

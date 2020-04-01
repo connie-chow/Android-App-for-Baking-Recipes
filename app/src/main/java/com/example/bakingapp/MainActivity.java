@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.bakingapp.model.Feed;
+import com.example.bakingapp.model.ModelIngredients;
+import com.example.bakingapp.model.ModelSteps;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +49,7 @@ import static com.example.bakingapp.RedditAPI.BASE_URL;
 public class MainActivity extends AppCompatActivity {
 
     RecipeCardAdapter mRecipeCardAdapter;
+    private AppDatabase mDb;
     private static final String TAG = "MainActivity";
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
@@ -88,6 +91,74 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onResponse: Server Response: " + response.toString());
                 Log.d(TAG, "onResponse: received information: " + response.body().toString());
 
+                // response body is an ArrayList
+                String result = response.body().toString();
+                Feed recipe;
+                // get the parsed data and insert into Room
+                for(int i = 0; i< response.body().size(); i++ ) {
+                    recipe = response.body().get(i);
+
+
+                    // Recipe Data
+                    String name = recipe.getName();
+                    String servings = recipe.getServings();
+                    String image = recipe.getImage();
+                    String recipeId = recipe.getId();
+
+                    Recipes recipe_card = new Recipes(recipeId, name, servings, image);
+                    mDb = AppDatabase.getInstance(getApplicationContext());
+                    long room_id = mDb.recipeDAO().insertRecipe(recipe_card);
+
+
+                    // Recipe Ingredients
+                    ArrayList ingredientsList = recipe.getIngredients();
+                    String recipe_id = recipe.getId();
+                    ModelIngredients item = null;
+                    Ingredients room_ingredients;
+
+                    for(int j = 0; j< ingredientsList.size(); j++) {
+                        item = (ModelIngredients)ingredientsList.get(j);
+                        String id = item.getId();
+                        String text = item.getIngredient();
+                        String measure = item.getMeasure();
+                        String quantity = item.getQuantity();
+                        room_ingredients =  new Ingredients(
+                                recipe_id, recipe_id, quantity, measure, text
+                        );
+                        long room_insert = mDb.recipeDAO().insertIngredients(room_ingredients);
+                    }
+                    List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+
+
+
+                    ArrayList stepsList = recipe.getSteps();
+                    ModelSteps steps = null;
+                    Steps room_step;
+
+                    for(int k = 0; k < stepsList.size(); k++) {
+                        steps = (ModelSteps)stepsList.get(k);
+                        String id = steps.getId();
+                        String shortDescription = steps.getShortDescription();
+                        String description = steps.getDescription();
+                        String videoURL = steps.getVideoURL();
+                        String thumbnailURL = steps.getThumbnailURL();
+
+                        room_step = new Steps(
+                                recipe_id, id, shortDescription, description, videoURL, thumbnailURL
+                        );
+                        long room_insert_step = mDb.recipeDAO().insertSteps(room_step);
+                    }
+                    List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
+
+                    // pass to adapter
+                   // List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
+
+
+                }
+
+                List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
+                List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+                List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
                 //List<Feed> childrenList = response.body().loadRecipeData();
                 /*
                 for (int i = 0; i < childrenList.size(); i++) {

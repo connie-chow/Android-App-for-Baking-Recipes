@@ -15,6 +15,22 @@ public class Feed {
     @Expose
     private String name;
 
+    public String getServings() {
+        return servings;
+    }
+
+    public void setServings(String servings) {
+        this.servings = servings;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @SerializedName("servings")
     @Expose
     private String servings;
@@ -23,17 +39,17 @@ public class Feed {
     @Expose
     private String image;
 
-    private ArrayList<Ingredients> ingredients;
+    private ArrayList<ModelIngredients> ingredients;
 
-    public void setIngredients(ArrayList<Ingredients> ingredients) {
+    public void setIngredients(ArrayList<ModelIngredients> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public void setSteps(ArrayList<Steps> steps) {
+    public void setSteps(ArrayList<ModelSteps> steps) {
         this.steps = steps;
     }
 
-    private ArrayList<Steps> steps;
+    private ArrayList<ModelSteps> steps;
 
 
     public String getId() {
@@ -59,11 +75,11 @@ public class Feed {
                 "id=" + id + '\'' + ", name=" + name + "\''" + "ingredients=" + ingredients + "steps=" + steps + "}";
     }
 
-    public ArrayList<Ingredients> getIngredients() {
+    public ArrayList<ModelIngredients> getIngredients() {
         return ingredients;
     }
 
-    public ArrayList<Steps> getSteps() {
+    public ArrayList<ModelSteps> getSteps() {
         return steps;
     }
 

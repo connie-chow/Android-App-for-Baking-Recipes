@@ -3,7 +3,7 @@ package com.example.bakingapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Steps {
+public class ModelSteps {
 
     @SerializedName("id")
     @Expose
