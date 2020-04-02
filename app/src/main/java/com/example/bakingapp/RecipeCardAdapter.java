@@ -11,6 +11,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,12 +60,44 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
         return 0;
     }
 
+
     // Sets list of movies to the adapter
+  /*
     public void setList(List<TestRecipe> movies)
     {
         if(movies != null){
             for(TestRecipe movieObj : movies) {
                 mRecipes.add(movieObj);
+            }
+            this.notifyDataSetChanged();
+        }
+    }
+
+*/
+
+
+    // Convert Recipe to TestRecipe container for now
+
+    public void setList(List<Recipes> movies)
+    {
+        if(movies != null){
+            for(Recipes movieObj : movies) {
+                TestIngredient i = new TestIngredient("", "", "", null);
+                ArrayList<TestIngredient> ii = new ArrayList<TestIngredient>();
+                ii.add(i);
+
+                TestStep s = new TestStep("", "", "", "", "");
+                ArrayList<TestStep> ss = new ArrayList<TestStep>();
+                ss.add(s);
+
+                TestRecipe r = new TestRecipe(
+                        movieObj.getR_id(),
+                        movieObj.getName(),
+                        ii, ss,
+                        movieObj.getServings(),
+                        movieObj.getImage()
+                );
+                mRecipes.add(r);
             }
             this.notifyDataSetChanged();
         }
@@ -149,7 +183,7 @@ mRecipes.add(m);
         public ImageView mRecipeThumbnail;
         public TextView mRecipeName;
         public TextView mRecipeServings;
-        //private MainViewModel mViewModel;
+
 
         // Constructor: Assign reference to grid element and set a click listener to it
         RecipeCardViewHolder(View itemView) {
@@ -186,13 +220,12 @@ mRecipes.add(m);
 
             mRecipeName.setText("Peach Pie");
             mRecipeServings.setText("8");
-/*
-            // Get recipe card data via ViewModel
-            mViewModel = ViewModelProviders.of(this,
-                    new Factory(this.getApplication()))
-                    .get(MainViewModel.class);
 
- */
+
+            //https://stackoverflow.com/questions/51974756/android-viewmodel-inside-recyclerview-adapter-for-lazy-database-downloads
+
+            // Get recipe card data via ViewModel
+
         }
 
 

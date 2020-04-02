@@ -22,7 +22,7 @@ public interface RecipeDAO {
 
 
     @Query("SELECT * FROM recipes ORDER BY id ASC")
-    List<Recipes> getAllRecipes();
+    LiveData<List<Recipes>> getAllRecipes();
 
     @Query("SELECT * FROM ingredients ORDER BY r_id ASC")
     List<Ingredients> getAllIngredients();

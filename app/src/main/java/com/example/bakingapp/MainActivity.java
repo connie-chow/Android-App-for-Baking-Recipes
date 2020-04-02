@@ -1,6 +1,11 @@
 package com.example.bakingapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +17,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -50,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     RecipeCardAdapter mRecipeCardAdapter;
     private AppDatabase mDb;
+    private MainViewModel mViewModel;
     private static final String TAG = "MainActivity";
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
@@ -91,8 +98,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
 
 
+        // ViewModel data should be fetched here and then used to populate the adapter/view
+        mViewModel = ViewModelProviders.of(this,
+                new Factory(this.getApplication()))
+                .get(MainViewModel.class);
 
+        //getLifecycle().addObserver((LifecycleObserver) mViewModel);
 
+        /*
+        List<Recipes> z = (List<Recipes>) mViewModel.getAllRecipes();
+
+        mViewModel.recipes.observe(this, new Observer<List<Recipes>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipes> movieEntries) {
+                //Log.d(TAG, "Receiving database update from LiveData");
+                mRecipeCardAdapter.clear();
+                mRecipeCardAdapter.setList(movieEntries);
+                mRecipeCardAdapter.notifyDataSetChanged();
+            }
+        });
+*/
+        retrieveRecipes();
 
 
         //https://stackoverflow.com/questions/24154917/retrofit-expected-begin-object-but-was-begin-array
@@ -199,7 +225,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //retrieveRecipes();
     }
+
+
+    public void retrieveRecipes() {
+        Log.d(LOG_TAG, "Actively retrieving the recipes from the database.");
+        //LiveData<List<Recipes>> recipes = mDb.recipeDAO().getAllRecipes();
+        mViewModel.recipes.observe(this, recipeEntries -> {
+            Log.d(LOG_TAG, "Receiving Database update from LiveData, recipeEntries.size(): " + recipeEntries.size());
+            mRecipeCardAdapter.setList(recipeEntries);
+        });
+    }
+
 
 //https://stuff.mit.edu/afs/sipb/project/android/docs/training/multiscreen/screensizes.html
 //http://www.appstoremarketresearch.com/articles/android-tutorial-master-detail-flow/
