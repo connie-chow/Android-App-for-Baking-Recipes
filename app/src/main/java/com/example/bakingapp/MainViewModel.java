@@ -19,6 +19,7 @@ public class MainViewModel extends AndroidViewModel {
 
     //private static long String TAG = MainViewModel.class.getSimpleName();
     private MutableLiveData<List<Recipes>> mRecipes;
+    private LiveData<List<Recipes>> mAllRecipes;
     private AppDatabase database;
     private RecipeRepository mRepo;
     private Context mContext = getApplication().getApplicationContext();
@@ -31,8 +32,14 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
         database = AppDatabase.getInstance(application);
+        mRepo = new RecipeRepository(application);
+        mAllRecipes =mRepo.getAllRecipes();
 //        recipes = database.recipeDAO().getAllRecipes();
     }
+
+
+    LiveData<List<Recipes>> getAllRecipes() { return mAllRecipes; }
+
 
     public void init() {
         if(mRecipes != null) {

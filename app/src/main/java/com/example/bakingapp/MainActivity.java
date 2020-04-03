@@ -104,6 +104,29 @@ public class MainActivity extends AppCompatActivity {
         FetchRecipesTask recipes = new FetchRecipesTask();
         recipes.execute();
 */
+/////////////////////////////////////////////////////////
+        // Get a new or existing ViewModel from the ViewModelProvider.
+        MainViewModel mRecipesViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        // Add an observer on the LiveData returned by getAlphabetizedWords.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        mRecipesViewModel.getAllRecipes().observe(this, new Observer<List<Recipes>>() {
+            @Override
+            public void onChanged(@Nullable final List<Recipes> words) {
+                // Update the cached copy of the words in the adapter.
+                mRecipeCardAdapter.setList(words);
+            }
+        });
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////
 
         // Retrofit2
         Retrofit retrofit = new Retrofit.Builder()
@@ -217,8 +240,8 @@ public class MainActivity extends AppCompatActivity {
                     recipeList.add(recipe_card);
                 }
 
-                mRecipeCardAdapter.setList(recipeList);
-                mRecipeCardAdapter.notifyDataSetChanged();
+                //mRecipeCardAdapter.setList(recipeList);
+                //mRecipeCardAdapter.notifyDataSetChanged();
 
                 //List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
                 //List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();

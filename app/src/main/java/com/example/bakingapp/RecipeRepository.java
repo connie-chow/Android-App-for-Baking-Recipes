@@ -1,9 +1,11 @@
 package com.example.bakingapp;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.bakingapp.model.Feed;
@@ -28,13 +30,26 @@ public class RecipeRepository {
     private ArrayList<TestRecipe> dataSet = new ArrayList();
     private Context appContext;
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
+    private AppDatabase mDb;
+    private LiveData<List<Recipes>> mAllRecipes;
 
     // Singleton pattern so as to avoid a bunch of open connections to your webservice
-    public static RecipeRepository getInstance() {
+    public static RecipeRepository getInstance(Application application) {
         if(instance == null) {
-            instance = new RecipeRepository();
+            instance = new RecipeRepository(application);
         }
         return instance;
+    }
+
+
+    public RecipeRepository(Application application) {
+        mDb = AppDatabase.getInstance(application.getApplicationContext());
+        mAllRecipes = mDb.recipeDAO().getAllRecipes();
+    }
+
+
+    LiveData<List<Recipes>> getAllRecipes() {
+        return mAllRecipes;
     }
 
 
