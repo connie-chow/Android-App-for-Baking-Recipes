@@ -39,6 +39,9 @@ public interface RecipeDAO {
     @Query("SELECT * from ingredients WHERE r_id = :r_id")
     LiveData<List<Ingredients>> getRecipeIngredients(String r_id);
 
+    @Query("SELECT * from steps WHERE r_id = :r_id AND s_id = :s_id")
+    LiveData<Steps> getRecipeStepDetails(String r_id, String s_id);
+
     @Delete
     void deleteRecipes(Recipes r);
 

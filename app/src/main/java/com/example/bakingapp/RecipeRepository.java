@@ -34,6 +34,7 @@ public class RecipeRepository {
     private LiveData<List<Recipes>> mAllRecipes;
     private LiveData<List<Steps>> mRecipeSteps;
     private LiveData<List<Ingredients>> mRecipeIngredients;
+    private LiveData<Steps> mRecipeStepDetails;
 
 
     // Singleton pattern so as to avoid a bunch of open connections to your webservice
@@ -63,6 +64,12 @@ public class RecipeRepository {
     LiveData<List<Ingredients>> getRecipeIngredients(String recipe_id) {
         mRecipeIngredients = mDb.recipeDAO().getRecipeIngredients(recipe_id);
         return mRecipeIngredients;
+    }
+
+
+    LiveData<Steps> getRecipeStepDetails(String recipe_id, String step_id) {
+        mRecipeStepDetails = mDb.recipeDAO().getRecipeStepDetails(recipe_id, step_id);
+        return mRecipeStepDetails;
     }
 
 

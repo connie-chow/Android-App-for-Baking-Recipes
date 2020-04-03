@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -47,17 +48,33 @@ public class RecipeActivity extends AppCompatActivity {
 
 
         // If tablet, set the recipe details on the right pane
+        // Tablet layout xml will contain recipe_details_container
         if (findViewById(R.id.recipe_details_container) != null) {
+            // default to first recipe step in this fragment for loading
             Bundle arguments = new Bundle();
-            //arguments.putInt(recipeDetailsFragment.ARG_ITEM_POS, 0);
-            //RecipesDetailFragment fragment = new RecipesDetailFragment();
-            //fragment.setArguments(arguments);
-            //getSupportFragmentManager().beginTransaction().add(R.id.fragment_recipe_details, fragment).commit();
+            arguments.putString("step_id", "0");
             RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
+            recipeDetailsFragment.setArguments(arguments);
             fragmentManager.beginTransaction().add(R.id.recipe_details_container, recipeDetailsFragment).commit();
         }
     }
 
+
+    // switchContent
+    // param: Fragment fragment
+    /*
+    public void switchContent(int id, String recipe_id, String step_id) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        RecipeDetailsFragment recipeDetailsFragment =  new RecipeDetailsFragment();
+        Bundle b = new Bundle();
+        b.putString("recipe_id", recipe_id);
+        b.putString("step_id", step_id);
+        recipeDetailsFragment.setArguments(b);
+        ft.replace(id, recipeDetailsFragment);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+*/
 
     // to be implemented
     public void onButtonClick(String arg1, int arg2) {

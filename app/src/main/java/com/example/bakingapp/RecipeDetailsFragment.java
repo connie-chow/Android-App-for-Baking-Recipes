@@ -7,7 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import java.util.List;
 
 public class RecipeDetailsFragment extends Fragment {
 
@@ -34,11 +39,29 @@ public class RecipeDetailsFragment extends Fragment {
         // Get incoming step ID from RecipeActivity Fragment's Step Adapter
         Bundle extras = getActivity().getIntent().getExtras();
         String step_id = extras.getString("step_id");
+        String recipe_id = extras.getString("recipe_id");
         //Bundle b = getArguments();
         //String step_id = b.getString("step_id");
-
-
         tv.setText(step_id + step_id + step_id + step_id + step_id );
+
+
+        RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
+
+        // Add an observer on the LiveData returned by getAlphabetizedWords.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        // how to get recipe id inside fragment?
+        mRecipeStepsViewModel.getRecipeStepDetails(recipe_id, step_id).observe(this, new Observer<Steps>() {
+            @Override
+            public void onChanged(@Nullable final Steps steps) {
+                // Update the cached copy of the words in the adapter.
+                //mRecipeStepAdapter.setList(steps);
+                tv.setText(step_id + step_id + step_id + step_id + step_id );
+            }
+        });
+
+
+
 
         // Return the rootView
         return rootView;

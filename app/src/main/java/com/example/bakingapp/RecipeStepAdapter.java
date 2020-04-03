@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +33,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
     private Context mContext;
     private LayoutInflater inflater;
-    private ArrayList<TestStep> mSteps;
+    //private ArrayList<TestStep> mSteps;
     private ArrayList<Steps> mRecipeSteps;
 
 
@@ -106,7 +108,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
         notifyDataSetChanged();
 
  */
-        mSteps.add(m);
+        //mSteps.add(m);
         notifyDataSetChanged();
     }
 
@@ -115,6 +117,20 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     public RecipeStepAdapter(Context c) {
         mContext = c;
     }
+
+    // switchContent
+    // param: Fragment fragment
+    /*
+    public void switchContent(int id, String recipe_id, String step_id) {
+        if (mContext == null)
+            return;
+        if (mContext instanceof RecipeActivity) {
+            RecipeActivity mainActivity = (RecipeActivity) mContext;
+            //Fragment frag = fragment;
+            RecipeActivity.switchContent(id, recipe_id, step_id);
+        }
+
+    }*/
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -141,6 +157,17 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     public void onBindViewHolder(RecipeStepViewHolder holder, int position) {
         //Bind each item to the correspond views
         holder.bind(mRecipeSteps.get(position));
+        //TextView recipeStepText = findViewById(R.id.recipe_step);
+        /*
+        holder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentJump(item);
+
+
+            }
+        });
+         */
     }
 
 
@@ -162,11 +189,13 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
         public TextView mRecipeStep;
 
+
         // Constructor: Assign reference to grid element and set a click listener to it
         RecipeStepViewHolder(View itemView) {
             super(itemView);
             mRecipeStep = itemView.findViewById(R.id.recipe_step);
             mRecipeStep.setOnClickListener(this);
+
         }
 
 
@@ -209,16 +238,16 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
             //We need to send the proper url for the image so that when the DetailActivity opens it has the proper image url
 
             Intent i = new Intent(mContext, RecipeDetailActivity.class);
-            TestStep m = mSteps.get(getAdapterPosition());
+            Steps m = mRecipeSteps.get(getAdapterPosition());
 
-            //Send now the movie object with the proper movie poster url
-            //mMovieItemClicked.onMovieItemClicked(mMovies.get(getAdapterPosition()), this);
-            if (v.findViewById(R.id.recipe_details_container) == null) {
-
+            // unable to see parent RecipeActivity's xml layout...so will always be null
+            //if (v.findViewById(R.id.recipe_details_container) == null) {
+            if(v.findViewById(R.id.recipe_details_container) == null) {
 
                 // Best practice design is to pass the id of the object we are navigating to instead
                 // of the whole object which is expensive
-                i.putExtra("id", m.getS_id());
+                i.putExtra("step_id", m.getS_id());
+                i.putExtra("recipe_id", m.getR_id());
 
                 //mContext.startActivity(i);
             } else {
@@ -233,14 +262,23 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
                 // or AppCompatActivity
                 Bundle arguments = new Bundle();
                 arguments.putString("step_id", m.getS_id());
+                arguments.putString("recipe_id", m.getR_id());
                 i.putExtras(arguments);
                 //https://stackoverflow.com/questions/768969/passing-a-bundle-on-startactivity
                 //https://stackoverflow.com/questions/35007764/pass-bundle-from-recycleview-adapter-to-activity
 
             }
 
+
+            //https://stackoverflow.com/questions/28984879/how-to-open-a-different-fragment-on-recyclerview-onclick
             if (v.findViewById(R.id.recipe_details_container) == null) {
-                mContext.startActivity(i);
+               // mContext.startActivity(i);
+                // already set the Bundle with recipe_id and step_id and sent to RecipeDetailActivity...
+                //switchContent(R.id.recipe_details_container, m.getR_id(), m.getS_id()); //, mFragment);
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                RecipeDetailsFragment myFragment = new RecipeDetailsFragment();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.recipe_details_container, myFragment).addToBackStack(null).commit();
+
             }
         }
     }
