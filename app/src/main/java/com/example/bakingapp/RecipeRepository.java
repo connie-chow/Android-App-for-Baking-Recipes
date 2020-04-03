@@ -32,6 +32,7 @@ public class RecipeRepository {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private AppDatabase mDb;
     private LiveData<List<Recipes>> mAllRecipes;
+    private LiveData<List<Steps>> mRecipeSteps;
 
     // Singleton pattern so as to avoid a bunch of open connections to your webservice
     public static RecipeRepository getInstance(Application application) {
@@ -50,6 +51,11 @@ public class RecipeRepository {
 
     LiveData<List<Recipes>> getAllRecipes() {
         return mAllRecipes;
+    }
+
+    LiveData<List<Steps>> getRecipeSteps(String recipe_id) {
+        mRecipeSteps = mDb.recipeDAO().getRecipeSteps(recipe_id);
+        return mRecipeSteps;
     }
 
 

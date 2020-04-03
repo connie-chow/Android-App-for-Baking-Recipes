@@ -32,12 +32,15 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     private Context mContext;
     private LayoutInflater inflater;
     private ArrayList<TestStep> mSteps;
+    private ArrayList<Steps> mRecipeSteps;
 
 
-    public RecipeStepAdapter(Context context, ArrayList<TestStep> recipes) {
+    //public RecipeStepAdapter(Context context, ArrayList<TestStep> recipes) {
+    public RecipeStepAdapter(Context context, ArrayList<Steps> recipes) {
         super();
         this.mContext = context;
-        this.mSteps = new ArrayList<TestStep>(recipes);
+        //this.mSteps = new ArrayList<TestStep>(recipes);
+        this.mRecipeSteps = new ArrayList<Steps>(recipes);
         inflater = LayoutInflater.from(context);
     }
 
@@ -45,18 +48,19 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     // getCount() very important, it is called and size of ImageAdapter ArrayList checked, if 0
     // the RecyclerView will not create any ViewHolders
     public int getCount() {
-        return mSteps.size();
+        return mRecipeSteps.size();
     }
 
-    public void clear() { mSteps.clear(); }
-    public TestStep getItem(int position) {
-        return mSteps.get(position);
+    public void clear() { mRecipeSteps.clear(); }
+    public Steps getItem(int position) {
+        return mRecipeSteps.get(position);
     }
     public long getItemId(int position) {
         return 0;
     }
 
     // Sets list of movies to the adapter
+    /*
     public void setList(List<TestStep> movies)
     {
         if(movies != null){
@@ -67,6 +71,17 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
         }
     }
 
+     */
+
+
+    public void setList(List<Steps> steps) {
+        if(steps != null) {
+            for(Steps s : steps ) {
+                mRecipeSteps.add(s);
+            }
+            this.notifyDataSetChanged();
+        }
+    }
 
     // Add MovieRoom entity to adapter
     public void add(TestStep m) {
@@ -125,7 +140,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     @Override
     public void onBindViewHolder(RecipeStepViewHolder holder, int position) {
         //Bind each item to the correspond views
-        holder.bind(mSteps.get(position));
+        holder.bind(mRecipeSteps.get(position));
     }
 
 
@@ -134,7 +149,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
     @Override
     public int getItemCount()
     {
-        return mSteps != null ? mSteps.size(): 0;
+        return mRecipeSteps != null ? mRecipeSteps.size(): 0;
     }
 
 
@@ -157,7 +172,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
         // Bind the ViewHolder to Adapter content by assigning adapter movie data to the movie
         // thumbnail UI element reference
-        void bind(TestStep recipe) {
+        void bind(Steps recipe) {
             //Use Picasso to load each image
             // load from adapter variable the particular movie
             //Picasso.get().setLoggingEnabled(true);
@@ -183,7 +198,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
                     .fallback(R.drawable.ic_no_image) //7
              */
 
-            mRecipeStep.setText(recipe.description);
+            mRecipeStep.setText(recipe.getDescription());
 
 
         }

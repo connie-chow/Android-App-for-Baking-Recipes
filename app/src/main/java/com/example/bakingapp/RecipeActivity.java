@@ -27,6 +27,9 @@ public class RecipeActivity extends AppCompatActivity {
         Intent i = getIntent();
         String m_id = i.getExtras().getString("id");
 
+        Bundle data = new Bundle();
+        data.putString("recipe_id", m_id);
+
 
         // Instantiate Fragment Manager in charge of fragments associated with this Activity
         // What is the concept behind a transaction and committing to it?
@@ -34,6 +37,7 @@ public class RecipeActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         RecipeFragment recipeFragment = new RecipeFragment();
+        recipeFragment.setArguments(data);
         fragmentTransaction.add(R.id.recipe_container, recipeFragment).commit();
 
         // https://stackoverflow.com/questions/14880746/difference-between-sw600dp-and-w600dp

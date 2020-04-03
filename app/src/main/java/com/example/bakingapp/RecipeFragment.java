@@ -9,17 +9,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecipeFragment extends Fragment {
 
     RecipeStepAdapter mRecipeStepAdapter;
     private Context globalContext = null;
+    private String mRecipeId;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
@@ -50,11 +55,37 @@ public class RecipeFragment extends Fragment {
         stepsView.setLayoutManager(layoutManager);
 
 
-        mRecipeStepAdapter = new RecipeStepAdapter(container.getContext(), new ArrayList<TestStep>());
+        //mRecipeStepAdapter = new RecipeStepAdapter(container.getContext(), new ArrayList<TestStep>());
+        mRecipeStepAdapter = new RecipeStepAdapter(container.getContext(), new ArrayList<Steps>());
         stepsView.setAdapter(mRecipeStepAdapter);
 
 
+        // get recipe id from Bundle
+        Bundle extras = getActivity().getIntent().getExtras();
+        mRecipeId = extras.getString("id");
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
+
+        // Add an observer on the LiveData returned by getAlphabetizedWords.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        // how to get recipe id inside fragment?
+        mRecipeStepsViewModel.getRecipeSteps(mRecipeId).observe(this, new Observer<List<Steps>>() {
+            @Override
+            public void onChanged(@Nullable final List<Steps> steps) {
+                // Update the cached copy of the words in the adapter.
+                mRecipeStepAdapter.setList(steps);
+            }
+        });
+
+
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////
         // setup test steps data
+        /*
         TestStep s0 = new TestStep(
                 "0", "Recipe Introduction", "Recipe Introduction",
                 "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4",
@@ -100,7 +131,7 @@ public class RecipeFragment extends Fragment {
         mRecipeStepAdapter.add(s6);
         mRecipeStepAdapter.notifyDataSetChanged();
 
-
+*/
         // Return the rootView
         return rootView;
 

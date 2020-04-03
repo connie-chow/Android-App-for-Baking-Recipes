@@ -33,6 +33,9 @@ public interface RecipeDAO {
     @Query("SELECT * FROM steps ORDER BY r_id ASC")
     List<Steps> getAllSteps();
 
+    @Query("SELECT * from steps WHERE r_id = :r_id")
+    LiveData<List<Steps>> getRecipeSteps(String r_id);
+
     @Delete
     void deleteRecipes(Recipes r);
 
