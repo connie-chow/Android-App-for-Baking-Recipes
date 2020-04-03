@@ -1,6 +1,8 @@
 package com.example.bakingapp;
 
 import android.app.Application;
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -16,11 +18,11 @@ import java.util.List;
 public class MainViewModel extends AndroidViewModel {
 
     //private static long String TAG = MainViewModel.class.getSimpleName();
-    public LiveData<List<Recipes>> recipes;
+    private MutableLiveData<List<Recipes>> mRecipes;
     private AppDatabase database;
-    public MutableLiveData<List<Recipes>> mutableRecipes = new MutableLiveData<List<Recipes>>();
-    public MutableLiveData<List<Ingredients>> mutableIngredients = new MutableLiveData<List<Ingredients>>();
-    public MutableLiveData<List<Steps>> mutableSteps = new MutableLiveData<List<Steps>>();
+    private RecipeRepository mRepo;
+    private Context mContext = getApplication().getApplicationContext();
+
 
 
     /*
@@ -28,42 +30,25 @@ public class MainViewModel extends AndroidViewModel {
      */
     public MainViewModel(@NonNull Application application) {
         super(application);
-
-        // how do I know this was initialized correctly?
         database = AppDatabase.getInstance(application);
-        //this.getApplication()
-        //database = AppDatabase.getInstance(application);
-        //movies is null after calling ViewModelProvider constructor
+//        recipes = database.recipeDAO().getAllRecipes();
+    }
 
-        // what are the values in movies?
-        // _movieDao = null, mDatabase = null
-        //movies = database.movieDao().getAllMovies();
-        //mutableRecipes.setValue((List<Recipes>)database.recipeDAO().getAllRecipes()); //.getValue()
-        //recipes = mutableRecipes;
-
-        recipes = database.recipeDAO().getAllRecipes();
-
+    public void init() {
+        if(mRecipes != null) {
+            return;
+        }
+        //mRepo = RecipeRepository.getInstance();
+        //mRecipes = mRepo.getRecipes(mContext);
+        //mRecipes = database.recipeDAO().getAllRecipes3();
     }
 
 
-    // Loads most popular movies
-    public void loadData() {
-        //MainViewModel.FetchMovieTask movies = new MainViewModel.FetchMovieTask();
-        //movies.execute("popular");
-        // Assign to movies
-        // should call repository to load the async task and put into Room DB
+    // LiveData can only be observed
+    public MutableLiveData<List<Recipes>> getRecipes() {
+        return mRecipes;
     }
 
-    public LiveData<List<Recipes>> getAllRecipes() {
-        //mutableRecipes.setValue((List<Recipes>) database.recipeDAO().getAllRecipes());  //getValue());
-        //return mutableRecipes;
-        recipes = (LiveData<List<Recipes>>) database.recipeDAO().getAllRecipes();
-        return recipes;
-    }
-
-    public LiveData<List<Recipes>> getRecipes() {
-        return recipes;
-    }
 
 }
 

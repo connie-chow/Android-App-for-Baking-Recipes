@@ -35,13 +35,13 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
 
     private Context mContext;
     private LayoutInflater inflater;
-    private ArrayList<TestRecipe> mRecipes;
+    private ArrayList<Recipes> mRecipes;
 
-
-    public RecipeCardAdapter(Context context, ArrayList<TestRecipe> recipes) {
+// changed from ArrayList for recipes param
+    public RecipeCardAdapter(Context context, List<Recipes> recipes) {
         super();
         this.mContext = context;
-        this.mRecipes = new ArrayList<TestRecipe>(recipes);
+        this.mRecipes = new ArrayList<Recipes>(recipes);
         inflater = LayoutInflater.from(context);
     }
 
@@ -53,7 +53,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
     }
 
     public void clear() { mRecipes.clear(); }
-    public TestRecipe getItem(int position) {
+    public Recipes getItem(int position) {
         return mRecipes.get(position);
     }
     public long getItemId(int position) {
@@ -62,22 +62,21 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
 
 
     // Sets list of movies to the adapter
-  /*
-    public void setList(List<TestRecipe> movies)
+    public void setList(List<Recipes> recipes)
     {
-        if(movies != null){
-            for(TestRecipe movieObj : movies) {
+        if(recipes != null){
+            for(Recipes movieObj : recipes) {
                 mRecipes.add(movieObj);
             }
             this.notifyDataSetChanged();
         }
     }
 
-*/
+
 
 
     // Convert Recipe to TestRecipe container for now
-
+/*
     public void setList(List<Recipes> movies)
     {
         if(movies != null){
@@ -102,32 +101,11 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             this.notifyDataSetChanged();
         }
     }
-
+*/
 
     // Add MovieRoom entity to adapter
-    public void add(TestRecipe m) {
-/*
-        String poster_path = m.getPoster_path();
-        String adult = m.getAdult();
-        String overview = m.getOverview();
-        String release_date = m.getRelease_date();
-        String genre_ids = m.getGenre_ids();
-        String m_id = m.getM_id();
-        String original_title = m.getOriginal_title();
-        String original_language = m.getOriginal_language();
-        String title = m.getTitle();
-        String backdrop_path = m.getBackdrop_path();
-        String popularity = m.getPopularity();
-        String vote_count = m.getVote_count();
-        String vote_average = m.getVote_average();
-        String video = m.getVideo();
-        boolean favorite = m.getFavorite();
-
-        mRecipes.add(m);
-        notifyDataSetChanged();
-
- */
-mRecipes.add(m);
+    public void add(Recipes r) {
+        mRecipes.add(r);
         notifyDataSetChanged();
     }
 
@@ -198,7 +176,7 @@ mRecipes.add(m);
 
         // Bind the ViewHolder to Adapter content by assigning adapter movie data to the movie
         // thumbnail UI element reference
-        void bind(TestRecipe recipe) {
+        void bind(Recipes recipe) {
             //Use Picasso to load each image
             // load from adapter variable the particular movie
             //Picasso.get().setLoggingEnabled(true);
@@ -218,8 +196,8 @@ mRecipes.add(m);
                     .fallback(R.drawable.ic_no_image) //7
              */
 
-            mRecipeName.setText("Peach Pie");
-            mRecipeServings.setText("8");
+            mRecipeName.setText(recipe.getName());
+            mRecipeServings.setText(recipe.getServings());
 
 
             //https://stackoverflow.com/questions/51974756/android-viewmodel-inside-recyclerview-adapter-for-lazy-database-downloads
@@ -239,7 +217,7 @@ mRecipes.add(m);
             //mMovieItemClicked.onMovieItemClicked(mMovies.get(getAdapterPosition()), this);
 
             Intent i = new Intent(mContext, RecipeActivity.class);
-            TestRecipe m = mRecipes.get(getAdapterPosition());
+            Recipes m = mRecipes.get(getAdapterPosition());
 
             // Best practice design is to pass the id of the object we are navigating to instead
             // of the whole object which is expensive

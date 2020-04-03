@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.ArrayList;
+
 @Entity(tableName = "recipes")
 public class Recipes {
 
@@ -25,14 +27,14 @@ public class Recipes {
     public Recipes (
             String r_id,
             String name,
-            //Ingredients ingredients,
-            //Steps steps,
+            //ArrayList<Ingredients> ingredients,
+            //ArrayList<Steps> steps,
             String servings,
             String image) {
 
         this.r_id = r_id;
         this.name = name;
-        //this.ingredients = ingredients;
+        //this.ingredients.setList(ingredients);
         //this.steps = steps;
         this.servings = servings;
     }

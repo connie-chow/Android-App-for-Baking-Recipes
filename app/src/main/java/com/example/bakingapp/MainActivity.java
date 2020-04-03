@@ -66,6 +66,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // clear for testing////////////////////////////////////////////////////////////////////
+        /*
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        mDb.recipeDAO().deleteAll();
+        mDb.recipeDAO().deleteAllIngredients();
+        mDb.recipeDAO().deleteALLSteps();
+        List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes2();
+        List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+        Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
+
+        // ViewModel data should be fetched here and then used to populate the adapter/view
+        mViewModel = ViewModelProviders.of(this,
+                new Factory(this.getApplication()))
+                .get(MainViewModel.class);
+        mViewModel.init();
+        mViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipes> newRecipes) {
+                mRecipeCardAdapter.notifyDataSetChanged();
+            }
+        });
+*/
         String s = getScreenResolution(getApplicationContext());
         //https://stackoverflow.com/questions/4605527/converting-pixels-to-dp
 
@@ -74,12 +96,14 @@ public class MainActivity extends AppCompatActivity {
         // detect if mobile or tablet based on dpi, do the span in the xml file
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         gridView.setLayoutManager(layoutManager);
-        mRecipeCardAdapter = new RecipeCardAdapter(this, new ArrayList<TestRecipe>());
-        gridView.setAdapter(mRecipeCardAdapter);
+        mRecipeCardAdapter = new RecipeCardAdapter(this, new ArrayList<Recipes>());
+        //mRecipeCardAdapter = new RecipeCardAdapter(this, mViewModel.getRecipes().getValue());
 
+        gridView.setAdapter(mRecipeCardAdapter);
+/*
         FetchRecipesTask recipes = new FetchRecipesTask();
         recipes.execute();
-
+*/
 
         // Retrofit2
         Retrofit retrofit = new Retrofit.Builder()
@@ -98,86 +122,69 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
 
 
-        // ViewModel data should be fetched here and then used to populate the adapter/view
-        mViewModel = ViewModelProviders.of(this,
-                new Factory(this.getApplication()))
-                .get(MainViewModel.class);
-
-        //getLifecycle().addObserver((LifecycleObserver) mViewModel);
-
-        /*
-        List<Recipes> z = (List<Recipes>) mViewModel.getAllRecipes();
-
-        mViewModel.recipes.observe(this, new Observer<List<Recipes>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipes> movieEntries) {
-                //Log.d(TAG, "Receiving database update from LiveData");
-                mRecipeCardAdapter.clear();
-                mRecipeCardAdapter.setList(movieEntries);
-                mRecipeCardAdapter.notifyDataSetChanged();
-            }
-        });
-*/
-        retrieveRecipes();
-
-
         //https://stackoverflow.com/questions/24154917/retrofit-expected-begin-object-but-was-begin-array
 
         call.enqueue(new Callback <List<Feed>>() {
             @Override
             public void onResponse(Call <List<Feed>> call, Response <List<Feed>> response) {
+
                 Log.d(TAG, "onResponse: Server Response: " + response.toString());
                 Log.d(TAG, "onResponse: received information: " + response.body().toString());
 
                 // response body is an ArrayList
+                ArrayList<Recipes> recipeList = new ArrayList<Recipes>();
                 String result = response.body().toString();
                 Feed recipe;
-                // get the parsed data and insert into Room
+
+
+                // get the parsed data and insert into Room, looping on each Recipe Card
                 for(int i = 0; i< response.body().size(); i++ ) {
+
                     recipe = response.body().get(i);
 
-
-                    // Recipe Data
+                    // Get Recipe Data
                     String name = recipe.getName();
                     String servings = recipe.getServings();
                     String image = recipe.getImage();
                     String recipeId = recipe.getId();
 
-                    Recipes recipe_card = new Recipes(recipeId, name, servings, image);
 
-                    long room_id = mDb.recipeDAO().insertRecipe(recipe_card);
-
-
-                    // Recipe Ingredients
+                    // Get Recipe Ingredients
                     ArrayList ingredientsList = recipe.getIngredients();
                     String recipe_id = recipe.getId();
                     ModelIngredients item = null;
                     Ingredients room_ingredients;
 
                     for(int j = 0; j< ingredientsList.size(); j++) {
+
                         item = (ModelIngredients)ingredientsList.get(j);
                         String id = item.getId();
                         String text = item.getIngredient();
                         String measure = item.getMeasure();
                         String quantity = item.getQuantity();
+
                         room_ingredients =  new Ingredients(
                                 recipe_id, Integer.toString(j), quantity, measure, text
                         );
-                        long room_insert = mDb.recipeDAO().insertIngredients(room_ingredients);
-                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + "ingredient_id = " + j);
-                        Log.d(LOG_TAG, "insert return code: " + room_insert);
+
+                        long insertIngredientsReturnCode = mDb.recipeDAO().insertIngredients(room_ingredients);
+                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + " ingredient_id = " + j);
+                        Log.d(LOG_TAG, "insert Ingredient return code: " + insertIngredientsReturnCode);
                         List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
                         Log.d(LOG_TAG, "totalIngredientsList.size(): " + totalIngredientsList.size());
                     }
+
                     List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
                     Log.d(LOG_TAG, "FINAL totalIngredientsList.size(): " + totalIngredientsList.size());
 
 
+                    // Get Recipe Steps
                     ArrayList stepsList = recipe.getSteps();
                     ModelSteps steps = null;
                     Steps room_step;
 
                     for(int k = 0; k < stepsList.size(); k++) {
+
                         steps = (ModelSteps)stepsList.get(k);
                         String id = steps.getId();
                         String shortDescription = steps.getShortDescription();
@@ -190,32 +197,33 @@ public class MainActivity extends AppCompatActivity {
                         );
 
 
-                        long room_insert_step = mDb.recipeDAO().insertSteps(room_step);
-                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + "step_id = " + id);
-                        Log.d(LOG_TAG, "insert return code: " + room_insert_step);
+                        long insertStepReturnCode = mDb.recipeDAO().insertSteps(room_step);
+                        Log.d(LOG_TAG, "recipe_id = " + recipe_id + " step_id = " + id);
+                        Log.d(LOG_TAG, "insert return code: " + insertStepReturnCode);
                         List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
                         Log.d(LOG_TAG, "totalStepsList.size(): " + totalStepsList.size());
                     }
+
                     List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
-                    Log.d(LOG_TAG, "totalStepsList.size(): " + totalStepsList.size());
+                    Log.d(LOG_TAG, "FINAL totalStepsList.size(): " + totalStepsList.size());
 
                     // pass to adapter
                    // List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
 
+                    Recipes recipe_card = new Recipes(recipeId, name, servings, image);
+                    long insertRecipeReturnCode = mDb.recipeDAO().insertRecipe(recipe_card);
+                    Log.d(LOG_TAG, "insert Recipe return code: " + insertRecipeReturnCode);
 
+                    recipeList.add(recipe_card);
                 }
 
-                List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
-                List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
-                List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
+                mRecipeCardAdapter.setList(recipeList);
+                mRecipeCardAdapter.notifyDataSetChanged();
+
+                //List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
+                //List<Ingredients> totalIngredientsList = (List<Ingredients>) mDb.recipeDAO().getAllIngredients();
+                //List<Steps> totalStepsList = (List<Steps>) mDb.recipeDAO().getAllSteps();
                 //List<Feed> childrenList = response.body().loadRecipeData();
-                /*
-                for (int i = 0; i < childrenList.size(); i++) {
-                    Log.d(TAG, "onResponse: \n" +
-                            "kind: " + childrenList.get(i).getKind() + "\n");
-                }
-                */
-
             }
 
             @Override
@@ -224,19 +232,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //retrieveRecipes();
     }
 
 
-    public void retrieveRecipes() {
-        Log.d(LOG_TAG, "Actively retrieving the recipes from the database.");
-        //LiveData<List<Recipes>> recipes = mDb.recipeDAO().getAllRecipes();
-        mViewModel.recipes.observe(this, recipeEntries -> {
-            Log.d(LOG_TAG, "Receiving Database update from LiveData, recipeEntries.size(): " + recipeEntries.size());
-            mRecipeCardAdapter.setList(recipeEntries);
-        });
-    }
 
 
 //https://stuff.mit.edu/afs/sipb/project/android/docs/training/multiscreen/screensizes.html
@@ -485,6 +483,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Insert some test data, we do AsyncTask JSON fetch later with Retrofit
             // RECIPE 1 ///////////////////////////////////////////////////////////////
+            /*
             TestIngredient i0 = new TestIngredient(
                     "0", "2", "CUP", "Graham Cracker crumbs"
             );
@@ -595,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
                 mRecipeCardAdapter.add(recipe);
                 mRecipeCardAdapter.add(recipe2);
                 mRecipeCardAdapter.notifyDataSetChanged();
-
+*/
             }
             /*
             if(result != null) {
@@ -611,6 +610,7 @@ public class MainActivity extends AppCompatActivity {
             */
 
     } //asynctask
+
 }
 
 /*

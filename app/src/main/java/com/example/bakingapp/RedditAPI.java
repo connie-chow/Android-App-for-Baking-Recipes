@@ -14,7 +14,7 @@ import retrofit2.http.Path;
 
 public interface RedditAPI {
 
-    String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking";
+    String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
     @Headers("Content-Type: application/json")
     @GET("baking.json")
