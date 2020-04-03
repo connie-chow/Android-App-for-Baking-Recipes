@@ -18,6 +18,7 @@ public class RecipeStepViewModel extends AndroidViewModel {
 
     //private static long String TAG = MainViewModel.class.getSimpleName();
     private LiveData<List<Steps>> mRecipeSteps;
+    private LiveData<List<Ingredients>> mRecipeIngredients;
     private AppDatabase database;
     private RecipeRepository mRepo;
     private Context mContext = getApplication().getApplicationContext();
@@ -37,5 +38,12 @@ public class RecipeStepViewModel extends AndroidViewModel {
         mRecipeSteps = mRepo.getRecipeSteps(recipeId);
         return mRecipeSteps;
     }
+
+
+    LiveData<List<Ingredients>> getRecipeIngredients(String recipeId) {
+        mRecipeIngredients = mRepo.getRecipeIngredients(recipeId);
+        return mRecipeIngredients;
+    }
+
 }
 

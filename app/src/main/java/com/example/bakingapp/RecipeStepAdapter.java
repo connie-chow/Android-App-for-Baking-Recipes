@@ -199,8 +199,6 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
              */
 
             mRecipeStep.setText(recipe.getDescription());
-
-
         }
 
 

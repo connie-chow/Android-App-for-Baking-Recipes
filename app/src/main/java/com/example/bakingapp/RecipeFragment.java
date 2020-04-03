@@ -81,6 +81,24 @@ public class RecipeFragment extends Fragment {
 
 
 
+        mRecipeStepsViewModel.getRecipeIngredients(mRecipeId).observe(this, new Observer<List<Ingredients>>() {
+            @Override
+            public void onChanged(@Nullable final List<Ingredients> ingredients) {
+                TextView mRecipeIngredients = getActivity().findViewById(R.id.recipe_steps_txt);
+
+                String mRecipeIngredientsString = "";
+
+                for(Ingredients i : ingredients ) {
+                    mRecipeIngredientsString = mRecipeIngredientsString
+                            + "\n"
+                            + i.getQuantity() + " " + i.getMeasure() + " "
+                            + i.getIngredient();
+                }
+
+
+                mRecipeIngredients.setText(mRecipeIngredientsString);
+            }
+        });
 
 
         ////////////////////////////////////////////////////////////////////////////////////
