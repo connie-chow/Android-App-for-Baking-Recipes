@@ -91,10 +91,22 @@ public class MainActivity extends AppCompatActivity {
         String s = getScreenResolution(getApplicationContext());
         //https://stackoverflow.com/questions/4605527/converting-pixels-to-dp
 
-        RecyclerView gridView = (RecyclerView) findViewById(R.id.rv_recipe_cards);
+
+        RecyclerView gridView;
+        GridLayoutManager layoutManager;
+
+        if (findViewById(R.id.rv_tablet_recipe_cards) != null) {
+            gridView = (RecyclerView) findViewById(R.id.rv_tablet_recipe_cards);
+            layoutManager = new GridLayoutManager(this, 3);
+        } else {
+            gridView = (RecyclerView) findViewById(R.id.rv_recipe_cards);
+            layoutManager = new GridLayoutManager(this, 1);
+        }
+
+
 
         // detect if mobile or tablet based on dpi, do the span in the xml file
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+
         gridView.setLayoutManager(layoutManager);
         mRecipeCardAdapter = new RecipeCardAdapter(this, new ArrayList<Recipes>());
         //mRecipeCardAdapter = new RecipeCardAdapter(this, mViewModel.getRecipes().getValue());
@@ -158,12 +170,15 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<Recipes> recipeList = new ArrayList<Recipes>();
                 String result = response.body().toString();
                 Feed recipe;
+                String recipeThumbnail = "";
 
 
                 // get the parsed data and insert into Room, looping on each Recipe Card
                 for(int i = 0; i< response.body().size(); i++ ) {
 
                     recipe = response.body().get(i);
+
+                    recipeThumbnail = "";
 
                     // Get Recipe Data
                     String name = recipe.getName();
@@ -206,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                     ModelSteps steps = null;
                     Steps room_step;
 
+
                     for(int k = 0; k < stepsList.size(); k++) {
 
                         steps = (ModelSteps)stepsList.get(k);
@@ -214,6 +230,14 @@ public class MainActivity extends AppCompatActivity {
                         String description = steps.getDescription();
                         String videoURL = steps.getVideoURL();
                         String thumbnailURL = steps.getThumbnailURL();
+
+                        if(recipeThumbnail.equals("")) {
+                            if (!thumbnailURL.equals("")) {
+                                recipeThumbnail = thumbnailURL;
+                            } else if (!videoURL.equals("")) {
+                                recipeThumbnail = videoURL;
+                            }
+                        }
 
                         room_step = new Steps(
                                 recipe_id, id, shortDescription, description, videoURL, thumbnailURL
@@ -233,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     // pass to adapter
                    // List<Recipes> totalRecipesList = (List<Recipes>) mDb.recipeDAO().getAllRecipes();
 
+                    image = recipeThumbnail;
                     Recipes recipe_card = new Recipes(recipeId, name, servings, image);
                     long insertRecipeReturnCode = mDb.recipeDAO().insertRecipe(recipe_card);
                     Log.d(LOG_TAG, "insert Recipe return code: " + insertRecipeReturnCode);

@@ -37,6 +37,7 @@ public class Recipes {
         //this.ingredients.setList(ingredients);
         //this.steps = steps;
         this.servings = servings;
+        this.image = image;
     }
 
 

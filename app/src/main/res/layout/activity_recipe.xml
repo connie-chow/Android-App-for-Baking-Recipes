@@ -16,7 +16,7 @@
         <!-- This container holds the Recipe Step List Fragment -->
         <FrameLayout android:id="@+id/recipe_container"
             android:layout_width="match_parent"
-            android:background="@android:color/holo_red_dark"
+            android:background="@android:color/white"
             android:layout_height="500dp"
             android:scaleType="centerInside"/>
 

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +37,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
     private Context mContext;
     private LayoutInflater inflater;
     private ArrayList<Recipes> mRecipes;
+
 
 // changed from ArrayList for recipes param
     public RecipeCardAdapter(Context context, List<Recipes> recipes) {
@@ -170,6 +172,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             mRecipeThumbnail.setOnClickListener(this);
             mRecipeName = itemView.findViewById(R.id.recipe_name);
             mRecipeServings = itemView.findViewById(R.id.recipe_servings);
+            itemView.setOnClickListener(this);
 
         }
 
@@ -186,10 +189,22 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Re
             //Picasso.get().load(movie_url).into(mRecipeThumbnail);
             //https://github.com/square/picasso/issues/427
             String url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
+            url = recipe.getImage();
+
+            /*
             Glide.with(itemView)  //2
                     .load(url) //3
                     .centerCrop() //
                     .into(mRecipeThumbnail); //8
+
+             */
+
+
+            Glide.with(itemView)
+                    .load(url) // or URI/path
+                    .into(mRecipeThumbnail); //imageview to set thumbnail to
+
+
             /*
             .placeholder(R.drawable.ic_image_place_holder) //5
                     .error(R.drawable.ic_broken_image) //6

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import java.util.List;
 
+
 public class RecipeDetailsFragment extends Fragment {
 
     public static String step_id;
@@ -96,3 +97,8 @@ public class RecipeDetailsFragment extends Fragment {
 
 
 }
+
+
+//https://android.jlelse.eu/android-exoplayer-starters-guide-6350433f256c
+//https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
+//https://blog.mindorks.com/using-exoplayer-to-play-video-and-audio-in-android-like-a-pro
