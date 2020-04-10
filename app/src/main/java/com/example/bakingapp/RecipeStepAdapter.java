@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -245,6 +247,18 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
             // unable to see parent RecipeActivity's xml layout...so will always be null
             //if (v.findViewById(R.id.recipe_details_container) == null) {
             LinearLayout parentActivity = (LinearLayout) v.getParent();
+            RecyclerView rv = (RecyclerView) parentActivity.getParent();
+            LinearLayout rvParent = (LinearLayout) rv.getParent();
+            ScrollView rvParent1 = (ScrollView) rvParent.getParent();
+            FrameLayout rvParent2 = (FrameLayout) rvParent1.getParent();
+            LinearLayout rvParent3 = (LinearLayout) rvParent2.getParent();
+            String tag = (String) rvParent3.getTag();
+
+            arguments.putString("step_id", m.getS_id());
+            arguments.putString("recipe_id", m.getR_id());
+
+
+/*
             //FragmentManager fragMgr = parentActivity.getSupportFragmentManager();
             if(parentActivity.findViewById(R.id.recipe_details_container) == null) {
 
@@ -275,10 +289,17 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
                 //https://stackoverflow.com/questions/35007764/pass-bundle-from-recycleview-adapter-to-activity
 
             }
-
+*/
 
             //https://stackoverflow.com/questions/28984879/how-to-open-a-different-fragment-on-recyclerview-onclick
-            if (v.findViewById(R.id.recipe_details_container) == null) {
+            //if (v.findViewById(R.id.recipe_details_container) == null) {
+            // do this if mobile
+            if(tag.equals("sw600dp_layout")) {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                RecipeDetailsFragment myFragment = new RecipeDetailsFragment();
+                myFragment.setArguments(arguments);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.recipe_details_container, myFragment).addToBackStack(null).commit();
+            } else {
                // mContext.startActivity(i);
                 // already set the Bundle with recipe_id and step_id and sent to RecipeDetailActivity...
                 //switchContent(R.id.recipe_details_container, m.getR_id(), m.getS_id()); //, mFragment);

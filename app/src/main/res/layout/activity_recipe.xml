@@ -10,6 +10,7 @@
     android:layout_height="match_parent"
     android:id="@+id/android_me_linear_layout"
     android:background="@android:color/white"
+    android:tag="regular_layout"
     android:orientation="vertical">
 
 
