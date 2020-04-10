@@ -34,13 +34,17 @@ public class RecipeDetailsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
         // Get a reference to the ImageView in the fragment layout
-        TextView tv = (TextView) rootView.findViewById(R.id.recipe_details_txt);
+        TextView tv = (TextView) rootView.findViewById(R.id.recipe_step_text);
         tv.setText("recipe step details: instructions...");
 
         // Get incoming step ID from RecipeActivity Fragment's Step Adapter
         Bundle extras = getActivity().getIntent().getExtras();
-        String step_id = extras.getString("step_id");
-        String recipe_id = extras.getString("recipe_id");
+        Bundle arguments = getArguments();
+
+
+
+        String step_id = arguments.getString("step_id");
+        String recipe_id = arguments.getString("recipe_id");
         //Bundle b = getArguments();
         //String step_id = b.getString("step_id");
         tv.setText(step_id + step_id + step_id + step_id + step_id );
@@ -57,7 +61,8 @@ public class RecipeDetailsFragment extends Fragment {
             public void onChanged(@Nullable final Steps steps) {
                 // Update the cached copy of the words in the adapter.
                 //mRecipeStepAdapter.setList(steps);
-                tv.setText(step_id + step_id + step_id + step_id + step_id );
+                tv.setText(steps.getDescription());
+                // expoplayer goes here also
             }
         });
 

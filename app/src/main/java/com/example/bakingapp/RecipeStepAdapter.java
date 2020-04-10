@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -239,15 +240,21 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
             Intent i = new Intent(mContext, RecipeDetailActivity.class);
             Steps m = mRecipeSteps.get(getAdapterPosition());
+            Bundle arguments = new Bundle();
 
             // unable to see parent RecipeActivity's xml layout...so will always be null
             //if (v.findViewById(R.id.recipe_details_container) == null) {
-            if(v.findViewById(R.id.recipe_details_container) == null) {
+            LinearLayout parentActivity = (LinearLayout) v.getParent();
+            //FragmentManager fragMgr = parentActivity.getSupportFragmentManager();
+            if(parentActivity.findViewById(R.id.recipe_details_container) == null) {
 
                 // Best practice design is to pass the id of the object we are navigating to instead
                 // of the whole object which is expensive
                 i.putExtra("step_id", m.getS_id());
                 i.putExtra("recipe_id", m.getR_id());
+
+                arguments.putString("step_id", m.getS_id());
+                arguments.putString("recipe_id", m.getR_id());
 
                 //mContext.startActivity(i);
             } else {
@@ -260,7 +267,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
                 // https://stackoverflow.com/questions/50378974/cannot-resolve-method-getsupportfragmentmanager
                 // Cannot invoke Fragment Manager in adapter...has to be done in am Activity extends FragmentActivity
                 // or AppCompatActivity
-                Bundle arguments = new Bundle();
+
                 arguments.putString("step_id", m.getS_id());
                 arguments.putString("recipe_id", m.getR_id());
                 i.putExtras(arguments);
@@ -277,8 +284,9 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
                 //switchContent(R.id.recipe_details_container, m.getR_id(), m.getS_id()); //, mFragment);
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 RecipeDetailsFragment myFragment = new RecipeDetailsFragment();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.recipe_details_container, myFragment).addToBackStack(null).commit();
-
+                myFragment.setArguments(arguments);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.recipe_container, myFragment).addToBackStack(null).commit();
+// chnaged from recipe_details_container, you use the current container to contain the new fragment
             }
         }
     }

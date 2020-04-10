@@ -53,6 +53,7 @@ public class RecipeActivity extends AppCompatActivity {
             // default to first recipe step in this fragment for loading
             Bundle arguments = new Bundle();
             arguments.putString("step_id", "0");
+            arguments.putString("recipe_id", "1");
             RecipeDetailsFragment recipeDetailsFragment = new RecipeDetailsFragment();
             recipeDetailsFragment.setArguments(arguments);
             fragmentManager.beginTransaction().add(R.id.recipe_details_container, recipeDetailsFragment).commit();
