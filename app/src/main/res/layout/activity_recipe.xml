@@ -18,10 +18,11 @@
         <FrameLayout android:id="@+id/recipe_container"
             android:layout_width="match_parent"
             android:background="@android:color/white"
-            android:layout_height="500dp"
+            android:layout_height="wrap_content"
             android:scaleType="centerInside"/>
 
 <!--
+android:layout_height="500dp"
     <FrameLayout android:id="@+id/recipe_details_container"
         android:layout_width="match_parent"
         android:layout_height="180dp"

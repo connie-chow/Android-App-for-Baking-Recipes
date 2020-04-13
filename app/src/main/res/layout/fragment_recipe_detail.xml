@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:layout_marginTop="10dp"
     android:layout_marginEnd="10dp"
-    android:layout_marginRight="10dp">
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="10dp">
 
 <!-- Displays step instructions and media -->
+    <!--
     <TextView
         android:id="@+id/recipe_step_exoplayer"
         android:background="@android:color/white"
         android:layout_width="wrap_content"
         android:text="Media Exoplayer goes here"
         android:layout_height="wrap_content" />
+        -->
 
     <TextView
         android:id="@+id/title"
@@ -24,23 +31,27 @@
         android:layout_marginBottom="15dp"
         android:padding="10dp"
         android:textColor="#000"
-        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textSize="25sp"
         android:text="This is the title"/>
 
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:background="#000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="25dp"
         android:scaleType="center"
         android:id="@+id/media_container">
 
         <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="match_parent"
+            android:background="@android:color/holo_purple"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#fff"
             android:scaleType="centerInside"
             android:src="@drawable/white_background" />
 
@@ -48,9 +59,11 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:scaleType="centerCrop"
+            android:visibility="visible"
             android:src="@drawable/ic_volume_up_grey_24dp"
             android:layout_gravity="end|bottom"
             android:id="@+id/volume_control"
+            android:background="@android:color/holo_orange_light"
             android:alpha="0"
             android:animateLayoutChanges="true"
             android:layout_marginBottom="15dp"/>
@@ -60,7 +73,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
-            android:visibility="gone"
+            android:visibility="visible"
+            android:background="@android:color/holo_red_dark"
             android:layout_gravity="center" />
     </FrameLayout>
 
@@ -69,13 +83,14 @@
     <TextView
         android:id="@+id/recipe_step_text"
         android:background="@android:color/white"
-        android:textSize="30dp"
+        android:textSize="18dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp" />
 
 </LinearLayout>
+</ScrollView>

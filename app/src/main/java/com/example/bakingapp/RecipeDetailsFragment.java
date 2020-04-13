@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -50,7 +51,8 @@ import java.util.List;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 // https://github.com/mitchtabian/Video-Player-RecyclerView/blob/master/app/src/main/java/com/codingwithmitch/recyclerviewvideoplayer/VideoPlayerRecyclerView.java
-
+// https://github.com/mitchtabian/Video-Player-RecyclerView/blob/master/app/src/main/java/com/codingwithmitch/recyclerviewvideoplayer/VideoPlayerRecyclerView.java
+// https://www.youtube.com/watch?v=z44CLCafepA  42:55
 
 public class RecipeDetailsFragment extends Fragment {
 
@@ -64,6 +66,8 @@ public class RecipeDetailsFragment extends Fragment {
     RequestManager requestManager;
     private PlayerView videoSurfaceView;
     private SimpleExoPlayer videoPlayer;
+    private enum VolumeState {ON, OFF};
+    private VolumeState volumeState;
 
     private int videoSurfaceDefaultHeight = 0;
     private int screenDefaultHeight = 0;
@@ -93,28 +97,29 @@ public class RecipeDetailsFragment extends Fragment {
 
         // exoplayer
         media_container = rootView.findViewById(R.id.media_container);
+        // contains all three children: progressBar, thumbnail and volume control
+
         mVideoThumbnail = rootView.findViewById(R.id.thumbnail);
+        // thumbnail is the thumbnail of the video in place of the video when loading
+        // mVideoThumbnail needs to be changed...
         title = rootView.findViewById(R.id.title);
         progressBar = rootView.findViewById(R.id.progressBar);
         volumeControl = rootView.findViewById(R.id.volume_control);
 
-
+        requestManager = initGlide();
 
         // Get a reference to the ImageView in the fragment layout
         TextView tv = (TextView) rootView.findViewById(R.id.recipe_step_text);
-        tv.setText("recipe step details: instructions...");
+        //tv.setText("recipe step details: instructions...");
 
         // Get incoming step ID from RecipeActivity Fragment's Step Adapter
         Bundle extras = getActivity().getIntent().getExtras();
         Bundle arguments = getArguments();
-
-
-
         String step_id = arguments.getString("step_id");
         String recipe_id = arguments.getString("recipe_id");
         //Bundle b = getArguments();
         //String step_id = b.getString("step_id");
-        tv.setText(step_id + step_id + step_id + step_id + step_id );
+        //tv.setText(step_id + step_id + step_id + step_id + step_id );
 
 
         RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
@@ -132,6 +137,7 @@ public class RecipeDetailsFragment extends Fragment {
                 tv.setText(steps.getDescription());
 
                 String url = steps.getThumbnailURL();
+                url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
                 mVideoURL = steps.getVideoURL();
 
                 Glide.with(rootView)
@@ -152,11 +158,11 @@ public class RecipeDetailsFragment extends Fragment {
 
         // Return the rootView
         return rootView;
-/*
+
 
         // Exoplayer: https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
         //https://exoplayer.dev/hello-world.html
-
+/*
 
 
 
@@ -179,6 +185,8 @@ public class RecipeDetailsFragment extends Fragment {
 
     }
 
+
+    //https://stackoverflow.com/questions/41848293/google-exoplayer-guide
     private void addVideoView() {
         media_container.addView(videoSurfaceView);
         isVideoViewAdded = true;
@@ -189,6 +197,15 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
+    private RequestManager initGlide(){
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.white_background)
+                .error(R.drawable.white_background);
+
+        return Glide.with(this)
+                .setDefaultRequestOptions(options);
+    }
+
 
     public void initPlayer(Context context) {
         this.context = context.getApplicationContext();
@@ -198,7 +215,9 @@ public class RecipeDetailsFragment extends Fragment {
         videoSurfaceDefaultHeight = point.x;
         screenDefaultHeight = point.y;
 
+        //videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView = new PlayerView(this.context);
+        videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
 
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -212,7 +231,7 @@ public class RecipeDetailsFragment extends Fragment {
         // Bind the player to the view.
         videoSurfaceView.setUseController(false);
         videoSurfaceView.setPlayer(videoPlayer);
-        //setVolumeControl(VolumeState.ON);
+        setVolumeControl(VolumeState.ON);
 
         playVideo();
 
@@ -240,7 +259,7 @@ public class RecipeDetailsFragment extends Fragment {
                     case Player.STATE_BUFFERING:
                         Log.e(TAG, "onPlayerStateChanged: Buffering video.");
                         if (progressBar != null) {
-                            //progressBar.setVisibility(true);
+                            progressBar.setVisibility(View.VISIBLE);
                         }
 
                         break;
@@ -254,7 +273,7 @@ public class RecipeDetailsFragment extends Fragment {
                     case Player.STATE_READY:
                         Log.e(TAG, "onPlayerStateChanged: Ready to play.");
                         if (progressBar != null) {
-                            //progressBar.setVisibility(false);
+                            progressBar.setVisibility(View.GONE);
                         }
                         if(!isVideoViewAdded){
                             addVideoView();
@@ -299,17 +318,79 @@ public class RecipeDetailsFragment extends Fragment {
 
 
 
+    private View.OnClickListener videoViewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            toggleVolume();
+        }
+    };
+
+    private void toggleVolume() {
+        if (videoPlayer != null) {
+            if (volumeState == VolumeState.OFF) {
+                Log.d(TAG, "togglePlaybackState: enabling volume.");
+                setVolumeControl(VolumeState.ON);
+
+            } else if(volumeState == VolumeState.ON) {
+                Log.d(TAG, "togglePlaybackState: disabling volume.");
+                setVolumeControl(VolumeState.OFF);
+
+            }
+        }
+    }
+
+
+    private void setVolumeControl(VolumeState state){
+        volumeState = state;
+        if(state == VolumeState.OFF){
+            videoPlayer.setVolume(0f);
+            animateVolumeControl();
+        }
+        else if(state == VolumeState.ON){
+            videoPlayer.setVolume(1f);
+            animateVolumeControl();
+        }
+    }
+
+    private void animateVolumeControl(){
+        if(volumeControl != null){
+            volumeControl.bringToFront();
+            if(volumeState == VolumeState.OFF){
+                requestManager.load(R.drawable.ic_volume_off_grey_24dp)
+                        .into(volumeControl);
+            }
+            else if(volumeState == VolumeState.ON){
+                requestManager.load(R.drawable.ic_volume_up_grey_24dp)
+                        .into(volumeControl);
+            }
+            volumeControl.animate().cancel();
+
+            volumeControl.setAlpha(1f);
+
+            volumeControl.animate()
+                    .alpha(0f)
+                    .setDuration(600).setStartDelay(1000);
+        }
+    }
+
+
+
     public void playVideo() {
         /*
         thumbnail = holder.thumbnail;
         progressBar = holder.progressBar;
         volumeControl = holder.volumeControl;
         viewHolderParent = holder.itemView;
-        requestManager = holder.requestManager;
+
+
+         = holder.requestManager;
         frameLayout = holder.itemView.findViewById(R.id.media_container);
 
 
 */
+        // remove any old surface views from previously playing videos
+        videoSurfaceView.setVisibility(View.INVISIBLE);
+        removeVideoView(videoSurfaceView);
 
         videoSurfaceView.setPlayer(videoPlayer);
 
@@ -325,6 +406,23 @@ public class RecipeDetailsFragment extends Fragment {
             videoPlayer.prepare(videoSource);
             videoPlayer.setPlayWhenReady(true);
         }
+    }
+
+
+    // Remove the old player
+    private void removeVideoView(PlayerView videoView) {
+        ViewGroup parent = (ViewGroup) videoView.getParent();
+        if (parent == null) {
+            return;
+        }
+
+        int index = parent.indexOfChild(videoView);
+        if (index >= 0) {
+            parent.removeViewAt(index);
+            isVideoViewAdded = false;
+            //viewHolderParent.setOnClickListener(null);
+        }
+
     }
 
 
