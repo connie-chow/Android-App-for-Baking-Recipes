@@ -194,6 +194,9 @@ public class RecipeDetailsFragment extends Fragment {
         videoSurfaceView.setVisibility(View.VISIBLE);
         videoSurfaceView.setAlpha(1);
         mVideoThumbnail.setVisibility(View.GONE);
+        Player v = videoSurfaceView.getPlayer();
+        //float vol = v.getVolume();
+        //SimpleExoPlayer e = v.getVolume();
     }
 
 
@@ -294,10 +297,6 @@ public class RecipeDetailsFragment extends Fragment {
 
             }
 
-            @Override
-            public void onPlayerError(ExoPlaybackException error) {
-
-            }
 
             @Override
             public void onPositionDiscontinuity(int reason) {
@@ -313,6 +312,23 @@ public class RecipeDetailsFragment extends Fragment {
             public void onSeekProcessed() {
 
             }
+
+
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                switch (error.type) {
+                    case ExoPlaybackException.TYPE_SOURCE:
+                        Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
+                        break;
+                    case ExoPlaybackException.TYPE_RENDERER:
+                        Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
+                        break;
+                    case ExoPlaybackException.TYPE_UNEXPECTED:
+                        Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                        break;
+                }
+            }
+
         });
     }
 
@@ -369,7 +385,7 @@ public class RecipeDetailsFragment extends Fragment {
 
             volumeControl.animate()
                     .alpha(0f)
-                    .setDuration(600).setStartDelay(1000);
+                    .setDuration(6000).setStartDelay(1000);
         }
     }
 
