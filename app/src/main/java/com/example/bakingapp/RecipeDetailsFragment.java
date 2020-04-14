@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -68,6 +69,7 @@ public class RecipeDetailsFragment extends Fragment {
     private SimpleExoPlayer videoPlayer;
     private enum VolumeState {ON, OFF};
     private VolumeState volumeState;
+    private PlayerControlView playerControlView;
 
     private int videoSurfaceDefaultHeight = 0;
     private int screenDefaultHeight = 0;
@@ -105,6 +107,7 @@ public class RecipeDetailsFragment extends Fragment {
         title = rootView.findViewById(R.id.title);
         progressBar = rootView.findViewById(R.id.progressBar);
         volumeControl = rootView.findViewById(R.id.volume_control);
+        playerControlView = rootView.findViewById(R.id.player_control_view);
 
         requestManager = initGlide();
 
@@ -210,6 +213,28 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
+
+    @Override
+    public void onStop() {
+        Log.e(TAG, "releasing: ");
+        super.onStop();
+        videoPlayer.stop();
+        videoPlayer.release();
+        videoPlayer=null;
+    }
+
+
+    @Override
+    public void onPause() {
+        Log.e(TAG, "releasing: ");
+        super.onPause();
+        videoPlayer.stop();
+        videoPlayer.release();
+        videoPlayer=null;
+    }
+
+
+
     public void initPlayer(Context context) {
         this.context = context.getApplicationContext();
         Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -235,6 +260,11 @@ public class RecipeDetailsFragment extends Fragment {
         videoSurfaceView.setUseController(false);
         videoSurfaceView.setPlayer(videoPlayer);
         setVolumeControl(VolumeState.ON);
+
+        // Attach player to the view.
+        playerControlView.setPlayer(videoPlayer);
+        // Prepare the player with the dash media source.
+        //videoPlayer.prepare(createMediaSource());
 
         playVideo();
 
