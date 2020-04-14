@@ -245,8 +245,10 @@ public class RecipeDetailsFragment extends Fragment {
 
         //videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView = new PlayerView(this.context);
+        videoSurfaceView.setControllerHideOnTouch(true);
         videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+        //videoSurfaceView.setUseController(true);
 
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -257,14 +259,29 @@ public class RecipeDetailsFragment extends Fragment {
         // 2. Create the player
         videoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
         // Bind the player to the view.
-        videoSurfaceView.setUseController(false);
+        videoSurfaceView.setUseController(true);
         videoSurfaceView.setPlayer(videoPlayer);
         setVolumeControl(VolumeState.ON);
 
         // Attach player to the view.
         playerControlView.setPlayer(videoPlayer);
+
         // Prepare the player with the dash media source.
         //videoPlayer.prepare(createMediaSource());
+
+
+        //https://stackoverflow.com/questions/52365953/exoplayer-playerview-onclicklistener-not-working
+        //https://codelabs.developers.google.com/codelabs/exoplayer-intro/#5
+        //https://exoplayer.dev/ui-components.html
+        videoSurfaceView.setOnClickListener(view -> {
+        //videoPlayer.getVideoSurfaceView().setOnClickListener(view -> {
+            Log.e("GET", "clicked!");
+            if(videoPlayer.getPlayWhenReady()){
+                videoPlayer.setPlayWhenReady(false);
+            }else{
+                videoPlayer.setPlayWhenReady(true);
+            }
+        });
 
         playVideo();
 
