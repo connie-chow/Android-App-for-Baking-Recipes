@@ -78,6 +78,12 @@ public class RecipeDetailsFragment extends Fragment {
     private boolean isVideoViewAdded;
     //private RequestManager requestManager;
 
+
+    private boolean playWhenReady = true;
+    private int currentWindow = 0;
+    private long playbackPosition = 0;
+    MediaSource videoSource;
+
     // controlling playback state
     //private VolumeState volumeState;
 
@@ -108,6 +114,13 @@ public class RecipeDetailsFragment extends Fragment {
         progressBar = rootView.findViewById(R.id.progressBar);
         volumeControl = rootView.findViewById(R.id.volume_control);
         playerControlView = rootView.findViewById(R.id.player_control_view);
+
+
+        /*
+        PlayerView videoView = rootView.findViewById(R.id.video_view);
+        PlayerControlView controls = rootView.findViewById(R.id.controls);
+        controls.setPlayer((Player) videoView);
+*/
 
         requestManager = initGlide();
 
@@ -148,7 +161,7 @@ public class RecipeDetailsFragment extends Fragment {
                         .into(mVideoThumbnail); //imageview to set thumbnail to
 
                 title.setText(steps.getShortDescription());
-                initPlayer(getContext());
+                //initPlayer(getContext());
 
 
 
@@ -198,6 +211,8 @@ public class RecipeDetailsFragment extends Fragment {
         videoSurfaceView.setAlpha(1);
         mVideoThumbnail.setVisibility(View.GONE);
         Player v = videoSurfaceView.getPlayer();
+        videoSurfaceView.setUseController(true);
+        //videoSurfaceView.setControllerHideOnTouch(true);
         //float vol = v.getVolume();
         //SimpleExoPlayer e = v.getVolume();
     }
@@ -213,29 +228,55 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
+    private void releasePlayer() {
+        if (videoPlayer != null) {
+            playWhenReady = videoPlayer.getPlayWhenReady();
+            playbackPosition = videoPlayer.getCurrentPosition();
+            currentWindow = videoPlayer.getCurrentWindowIndex();
+            videoPlayer.release();
+            videoPlayer = null;
+        }
+    }
 
     @Override
     public void onStop() {
-        Log.e(TAG, "releasing: ");
+        Log.e(TAG, "RecipeDetailsFragment: onStop() ..releasing: ");
         super.onStop();
-        videoPlayer.stop();
-        videoPlayer.release();
-        videoPlayer=null;
+        if (Util.SDK_INT >= 24) {
+            releasePlayer();
+        }
     }
 
 
+    /*
+    Before API Level 24 there is no guarantee of onStop being called. So we have to release the
+    player as early as possible in onPause. Starting with API Level 24 (which brought multi and
+    split window mode) onStop is guaranteed to be called. In the paused state our activity is still
+    visible so we wait to release the player until onStop.
+     */
     @Override
     public void onPause() {
-        Log.e(TAG, "releasing: ");
+        Log.e(TAG, "RecipeDetailsFragment: onPause(): releasing: ");
         super.onPause();
-        videoPlayer.stop();
-        videoPlayer.release();
-        videoPlayer=null;
+        if (Util.SDK_INT < 24) {
+            releasePlayer();
+        }
     }
 
 
 
     public void initPlayer(Context context) {
+/*
+        // new for resuming a video
+        if(videoPlayer != null) {
+            videoPlayer.setPlayWhenReady(playWhenReady);
+            videoPlayer.seekTo(currentWindow, playbackPosition);
+            videoPlayer.prepare(videoSource, false, false);
+        }
+
+ */
+
+
         this.context = context.getApplicationContext();
         Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
@@ -245,7 +286,8 @@ public class RecipeDetailsFragment extends Fragment {
 
         //videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView = new PlayerView(this.context);
-        videoSurfaceView.setControllerHideOnTouch(true);
+        //videoSurfaceView.setControllerHideOnTouch(true);
+        videoSurfaceView.hideController();
         videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
         //videoSurfaceView.setUseController(true);
@@ -310,6 +352,7 @@ public class RecipeDetailsFragment extends Fragment {
                         Log.e(TAG, "onPlayerStateChanged: Buffering video.");
                         if (progressBar != null) {
                             progressBar.setVisibility(View.VISIBLE);
+                            videoSurfaceView.setUseController(false);
                         }
 
                         break;
@@ -403,6 +446,67 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
+    // Player's lifecycle to manage resources, including memory, CPU, network connections, hardware codecs
+    // Player has no lifecycle API calls of its own, so we tie it to the lifecycle of the fragment
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT >= 24) {
+            Bundle extras = getActivity().getIntent().getExtras();
+            Bundle arguments = getArguments();
+            String step_id = arguments.getString("step_id");
+            String recipe_id = arguments.getString("recipe_id");
+            initPlayer(getContext());
+
+            RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
+
+            // Add an observer on the LiveData returned by getAlphabetizedWords.
+            // The onChanged() method fires when the observed data changes and the activity is
+            // in the foreground.
+            // how to get recipe id inside fragment?
+            mRecipeStepsViewModel.getRecipeStepDetails(recipe_id, step_id).observe(this, new Observer<Steps>() {
+                @Override
+                public void onChanged(@Nullable final Steps steps) {
+                    // Update the cached copy of the words in the adapter.
+                    //mRecipeStepAdapter.setList(steps);
+                    // steps has thumbnailURL, videoURL, shortDescription, r_id, s_id, description
+                    //tv.setText(steps.getDescription());
+
+                    String url = steps.getThumbnailURL();
+                    url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
+                    mVideoURL = steps.getVideoURL();
+
+                    //Glide.with(rootView)
+                    //        .load(url) // or URI/path
+                    //        .into(mVideoThumbnail); //imageview to set thumbnail to
+
+                    //title.setText(steps.getShortDescription());
+                    initPlayer(getContext());
+
+
+
+                    // expoplayer goes here also
+                }
+            });
+
+
+
+            Log.e(TAG, "RecipeDetailsFragment: onStart()");
+
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG, "RecipeDetailsFragment: onResume()");
+        //hideSystemUi();
+        if ((Util.SDK_INT < 24 || videoPlayer == null)) {
+            initPlayer(getContext());
+        }
+    }
+
+
     private void setVolumeControl(VolumeState state){
         volumeState = state;
         if(state == VolumeState.OFF){
@@ -459,12 +563,16 @@ public class RecipeDetailsFragment extends Fragment {
 
         //viewHolderParent.setOnClickListener(videoViewClickListener);
 
+
+        // ExoPlayer needs something to play, create a MediaSource
+        // used when making http request for the file
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
                 context, Util.getUserAgent(context, "RecyclerView VideoPlayer"));
         //String mediaUrl = mediaObjects.get(targetPosition).getMedia_url();
+
         String mediaUrl = mVideoURL;
         if (mediaUrl != null) {
-            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+            videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(mediaUrl));
             videoPlayer.prepare(videoSource);
             videoPlayer.setPlayWhenReady(true);
