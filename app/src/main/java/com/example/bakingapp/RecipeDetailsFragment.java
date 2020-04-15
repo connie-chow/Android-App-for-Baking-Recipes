@@ -76,7 +76,6 @@ public class RecipeDetailsFragment extends Fragment {
     private Context context;
     private int playPosition = -1;
     private boolean isVideoViewAdded;
-    //private RequestManager requestManager;
 
 
     private boolean playWhenReady = true;
@@ -114,19 +113,11 @@ public class RecipeDetailsFragment extends Fragment {
         progressBar = rootView.findViewById(R.id.progressBar);
         volumeControl = rootView.findViewById(R.id.volume_control);
         playerControlView = rootView.findViewById(R.id.player_control_view);
-
-
-        /*
-        PlayerView videoView = rootView.findViewById(R.id.video_view);
-        PlayerControlView controls = rootView.findViewById(R.id.controls);
-        controls.setPlayer((Player) videoView);
-*/
-
         requestManager = initGlide();
 
         // Get a reference to the ImageView in the fragment layout
         TextView tv = (TextView) rootView.findViewById(R.id.recipe_step_text);
-        //tv.setText("recipe step details: instructions...");
+
 
         // Get incoming step ID from RecipeActivity Fragment's Step Adapter
         Bundle extras = getActivity().getIntent().getExtras();
@@ -136,6 +127,7 @@ public class RecipeDetailsFragment extends Fragment {
         //Bundle b = getArguments();
         //String step_id = b.getString("step_id");
         //tv.setText(step_id + step_id + step_id + step_id + step_id );
+
 
 
         RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
@@ -156,9 +148,9 @@ public class RecipeDetailsFragment extends Fragment {
                 url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
                 mVideoURL = steps.getVideoURL();
 
-                Glide.with(rootView)
-                        .load(url) // or URI/path
-                        .into(mVideoThumbnail); //imageview to set thumbnail to
+                //Glide.with(rootView)
+                //        .load(url) // or URI/path
+                //        .into(mVideoThumbnail); //imageview to set thumbnail to
 
                 title.setText(steps.getShortDescription());
                 //initPlayer(getContext());
@@ -178,26 +170,6 @@ public class RecipeDetailsFragment extends Fragment {
 
         // Exoplayer: https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
         //https://exoplayer.dev/hello-world.html
-/*
-
-
-
-        // Inflate the Android-Me fragment layout
-        View rootView = inflater.inflate(R.layout.fragment_body_part, container, false);
-
-        // Get a reference to the ImageView in the fragment layout
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.body_part_image_view);
-
-        // Set the image to the first in our list of head images
-        imageView.setImageResource(AndroidImageAssets.getHeads().get(0));
-
-        // TODO (3) If a list of image ids exists, set the image resource to the correct item in that list
-        // Otherwise, create a Log statement that indicates that the list was not found
-
-        // Return the rootView
-        return rootView;
-
- */
 
     }
 
@@ -212,9 +184,6 @@ public class RecipeDetailsFragment extends Fragment {
         mVideoThumbnail.setVisibility(View.GONE);
         Player v = videoSurfaceView.getPlayer();
         videoSurfaceView.setUseController(true);
-        //videoSurfaceView.setControllerHideOnTouch(true);
-        //float vol = v.getVolume();
-        //SimpleExoPlayer e = v.getVolume();
     }
 
 
@@ -264,7 +233,7 @@ public class RecipeDetailsFragment extends Fragment {
     }
 
 
-
+// https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
     public void initPlayer(Context context) {
 /*
         // new for resuming a video
@@ -301,7 +270,8 @@ public class RecipeDetailsFragment extends Fragment {
         // 2. Create the player
         videoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
         // Bind the player to the view.
-        videoSurfaceView.setUseController(true);
+        //videoSurfaceView.setUseController(true);
+
         videoSurfaceView.setPlayer(videoPlayer);
         setVolumeControl(VolumeState.ON);
 
@@ -456,7 +426,7 @@ public class RecipeDetailsFragment extends Fragment {
             Bundle arguments = getArguments();
             String step_id = arguments.getString("step_id");
             String recipe_id = arguments.getString("recipe_id");
-            initPlayer(getContext());
+            //initPlayer(getContext());
 
             RecipeStepViewModel mRecipeStepsViewModel = ViewModelProviders.of(this).get(RecipeStepViewModel.class);
 
@@ -502,7 +472,7 @@ public class RecipeDetailsFragment extends Fragment {
         Log.e(TAG, "RecipeDetailsFragment: onResume()");
         //hideSystemUi();
         if ((Util.SDK_INT < 24 || videoPlayer == null)) {
-            initPlayer(getContext());
+            //initPlayer(getContext());
         }
     }
 
@@ -555,13 +525,12 @@ public class RecipeDetailsFragment extends Fragment {
 
 
 */
+
+
         // remove any old surface views from previously playing videos
-        videoSurfaceView.setVisibility(View.INVISIBLE);
-        removeVideoView(videoSurfaceView);
-
-        videoSurfaceView.setPlayer(videoPlayer);
-
-        //viewHolderParent.setOnClickListener(videoViewClickListener);
+        //videoSurfaceView.setVisibility(View.INVISIBLE);
+        //removeVideoView(videoSurfaceView);
+        //videoSurfaceView.setPlayer(videoPlayer);
 
 
         // ExoPlayer needs something to play, create a MediaSource
