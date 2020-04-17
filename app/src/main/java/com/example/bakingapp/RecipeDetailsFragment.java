@@ -148,6 +148,15 @@ public class RecipeDetailsFragment extends Fragment {
                 url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
                 mVideoURL = steps.getVideoURL();
 
+                if(mVideoURL.equals("")) {
+                    media_container.setVisibility(View.GONE);
+                    for (int i = 0; i < media_container.getChildCount(); i++) {
+                        View v = media_container.getChildAt(i);
+                        v.setVisibility(View.GONE);
+                        v.postInvalidate();
+                    }
+                }
+
                 //Glide.with(rootView)
                 //        .load(url) // or URI/path
                 //        .into(mVideoThumbnail); //imageview to set thumbnail to
@@ -171,6 +180,36 @@ public class RecipeDetailsFragment extends Fragment {
         // Exoplayer: https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
         //https://exoplayer.dev/hello-world.html
 
+    }
+
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        // Store UI state to the savedInstanceState
+        // This bundle will be passed to onCreate on next call
+        Log.e(TAG, "RecipeDetailsFragment: onPause(): releasing: ");
+
+
+        savedInstanceState.putBoolean("playWhenReady", playWhenReady);
+        savedInstanceState.putString("playbackPosition", Long.toString(playbackPosition));
+        savedInstanceState.putString("currentWindow", Integer.toString(currentWindow));
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
+    // fragments do'nt have onRestorEInstanceState
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            playbackPosition = Integer.parseInt(savedInstanceState.getString("playbackPosition"));
+            playWhenReady = savedInstanceState.getBoolean("playWhenReady");
+            currentWindow = Integer.parseInt(savedInstanceState.getString("currentWindow"));
+        }
     }
 
 
@@ -235,15 +274,13 @@ public class RecipeDetailsFragment extends Fragment {
 
 // https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
     public void initPlayer(Context context) {
-/*
+
         // new for resuming a video
         if(videoPlayer != null) {
             videoPlayer.setPlayWhenReady(playWhenReady);
             videoPlayer.seekTo(currentWindow, playbackPosition);
             videoPlayer.prepare(videoSource, false, false);
         }
-
- */
 
 
         this.context = context.getApplicationContext();
@@ -268,7 +305,7 @@ public class RecipeDetailsFragment extends Fragment {
                 new DefaultTrackSelector(videoTrackSelectionFactory);
 
         // 2. Create the player
-        videoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        videoPlayer = ExoPlayerFactory.newSimpleInstance(context , trackSelector);
         // Bind the player to the view.
         //videoSurfaceView.setUseController(true);
 
@@ -446,12 +483,15 @@ public class RecipeDetailsFragment extends Fragment {
                     url = "https://image.tmdb.org/t/p/w185//xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg";
                     mVideoURL = steps.getVideoURL();
 
-                    //Glide.with(rootView)
-                    //        .load(url) // or URI/path
-                    //        .into(mVideoThumbnail); //imageview to set thumbnail to
+                    if(!mVideoURL.equals("")) {
+                        //Glide.with(rootView)
+                        //        .load(url) // or URI/path
+                        //        .into(mVideoThumbnail); //imageview to set thumbnail to
 
-                    //title.setText(steps.getShortDescription());
-                    initPlayer(getContext());
+                        //title.setText(steps.getShortDescription());
+
+                        initPlayer(getContext());
+                    }
 
 
 
@@ -472,7 +512,8 @@ public class RecipeDetailsFragment extends Fragment {
         Log.e(TAG, "RecipeDetailsFragment: onResume()");
         //hideSystemUi();
         if ((Util.SDK_INT < 24 || videoPlayer == null)) {
-            //initPlayer(getContext());
+
+            initPlayer(getContext());
         }
     }
 
