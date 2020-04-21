@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -49,13 +51,15 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
+import retrofit2.Callback;
+
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 // https://github.com/mitchtabian/Video-Player-RecyclerView/blob/master/app/src/main/java/com/codingwithmitch/recyclerviewvideoplayer/VideoPlayerRecyclerView.java
 // https://github.com/mitchtabian/Video-Player-RecyclerView/blob/master/app/src/main/java/com/codingwithmitch/recyclerviewvideoplayer/VideoPlayerRecyclerView.java
 // https://www.youtube.com/watch?v=z44CLCafepA  42:55
 
-public class RecipeDetailsFragment extends Fragment {
+public class RecipeDetailsFragment extends Fragment implements SurfaceHolder.Callback {
 
     public static String step_id;
     FrameLayout media_container;
@@ -67,9 +71,26 @@ public class RecipeDetailsFragment extends Fragment {
     RequestManager requestManager;
     private PlayerView videoSurfaceView;
     private SimpleExoPlayer videoPlayer;
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.e(TAG, "RecipeDetailsFragment: surfaceCreated()");
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.e(TAG, "RecipeDetailsFragment: surfaceChanged()");
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.e(TAG, "RecipeDetailsFragment: surfaceDestroyed()");
+    }
+
     private enum VolumeState {ON, OFF};
     private VolumeState volumeState;
     private PlayerControlView playerControlView;
+    SurfaceHolder surfaceHolder;
 
     private int videoSurfaceDefaultHeight = 0;
     private int screenDefaultHeight = 0;
@@ -172,7 +193,6 @@ public class RecipeDetailsFragment extends Fragment {
 
 
 
-
         // Return the rootView
         return rootView;
 
@@ -215,6 +235,7 @@ public class RecipeDetailsFragment extends Fragment {
 
     //https://stackoverflow.com/questions/41848293/google-exoplayer-guide
     private void addVideoView() {
+        Log.e(TAG, "RecipeDetailsFragment: addVideoView():videoSurfaceView= " + videoSurfaceView);
         media_container.addView(videoSurfaceView);
         isVideoViewAdded = true;
         videoSurfaceView.requestFocus();
@@ -237,6 +258,7 @@ public class RecipeDetailsFragment extends Fragment {
 
 
     private void releasePlayer() {
+        removeVideoView(videoSurfaceView);
         if (videoPlayer != null) {
             playWhenReady = videoPlayer.getPlayWhenReady();
             playbackPosition = videoPlayer.getCurrentPosition();
@@ -274,14 +296,14 @@ public class RecipeDetailsFragment extends Fragment {
 
 // https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
     public void initPlayer(Context context) {
-
+/*
         // new for resuming a video
         if(videoPlayer != null) {
             videoPlayer.setPlayWhenReady(playWhenReady);
             videoPlayer.seekTo(currentWindow, playbackPosition);
             videoPlayer.prepare(videoSource, false, false);
         }
-
+*/
 
         this.context = context.getApplicationContext();
         Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -292,11 +314,20 @@ public class RecipeDetailsFragment extends Fragment {
 
         //videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView = new PlayerView(this.context);
+        Log.e(TAG, "RecipeDetailsFragment: initPlayer(): videoSurfaceView created");
         //videoSurfaceView.setControllerHideOnTouch(true);
         videoSurfaceView.hideController();
         videoSurfaceView.setVisibility(View.INVISIBLE);
         videoSurfaceView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
         //videoSurfaceView.setUseController(true);
+
+
+        if(videoSurfaceView != null) {
+            SurfaceView v = (SurfaceView) videoSurfaceView.getVideoSurfaceView();
+            surfaceHolder = v.getHolder();
+            surfaceHolder.addCallback(this);
+        }
+
 
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -375,6 +406,7 @@ public class RecipeDetailsFragment extends Fragment {
                         if (progressBar != null) {
                             progressBar.setVisibility(View.GONE);
                         }
+                        Log.e(TAG, "RecipeDetailsFragment: isVideoViewAdded = " + isVideoViewAdded);
                         if(!isVideoViewAdded){
                             addVideoView();
                         }
@@ -514,6 +546,14 @@ public class RecipeDetailsFragment extends Fragment {
         if ((Util.SDK_INT < 24 || videoPlayer == null)) {
 
             initPlayer(getContext());
+            /*
+            if(videoPlayer != null) {
+                videoPlayer.setPlayWhenReady(playWhenReady);
+                videoPlayer.seekTo(currentWindow, playbackPosition);
+                videoPlayer.prepare(videoSource, false, false);
+                videoPlayer.setPlayWhenReady(true);
+            }*/
+
         }
     }
 
@@ -582,6 +622,7 @@ public class RecipeDetailsFragment extends Fragment {
 
         String mediaUrl = mVideoURL;
         if (mediaUrl != null) {
+            Log.e(TAG, "RecipeDetailsFragment: videoSource = " + videoSource);
             videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(mediaUrl));
             videoPlayer.prepare(videoSource);
@@ -603,10 +644,7 @@ public class RecipeDetailsFragment extends Fragment {
             isVideoViewAdded = false;
             //viewHolderParent.setOnClickListener(null);
         }
-
     }
-
-
 }
 
 

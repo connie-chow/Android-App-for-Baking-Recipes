@@ -58,6 +58,8 @@ public class RecipeActivity extends AppCompatActivity {
             recipeDetailsFragment.setArguments(arguments);
             fragmentManager.beginTransaction().add(R.id.recipe_details_container, recipeDetailsFragment).commit();
         }
+
+        Thread.dumpStack();
     }
 
 
