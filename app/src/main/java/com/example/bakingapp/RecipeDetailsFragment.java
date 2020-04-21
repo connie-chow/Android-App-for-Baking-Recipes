@@ -235,6 +235,14 @@ public class RecipeDetailsFragment extends Fragment implements SurfaceHolder.Cal
 
     //https://stackoverflow.com/questions/41848293/google-exoplayer-guide
     private void addVideoView() {
+
+        if(playbackPosition != 0) {
+            videoPlayer.setPlayWhenReady(playWhenReady);
+            videoPlayer.seekTo(currentWindow, playbackPosition);
+            videoPlayer.prepare(videoSource, false, false);
+            videoPlayer.setPlayWhenReady(true);
+        }
+
         Log.e(TAG, "RecipeDetailsFragment: addVideoView():videoSurfaceView= " + videoSurfaceView);
         media_container.addView(videoSurfaceView);
         isVideoViewAdded = true;
@@ -244,6 +252,9 @@ public class RecipeDetailsFragment extends Fragment implements SurfaceHolder.Cal
         mVideoThumbnail.setVisibility(View.GONE);
         Player v = videoSurfaceView.getPlayer();
         videoSurfaceView.setUseController(true);
+
+
+
     }
 
 
@@ -546,13 +557,14 @@ public class RecipeDetailsFragment extends Fragment implements SurfaceHolder.Cal
         if ((Util.SDK_INT < 24 || videoPlayer == null)) {
 
             initPlayer(getContext());
-            /*
+/*
             if(videoPlayer != null) {
                 videoPlayer.setPlayWhenReady(playWhenReady);
                 videoPlayer.seekTo(currentWindow, playbackPosition);
                 videoPlayer.prepare(videoSource, false, false);
                 videoPlayer.setPlayWhenReady(true);
-            }*/
+            }
+            */
 
         }
     }
