@@ -10,6 +10,9 @@ import java.util.ArrayList;
 @Entity(tableName = "recipes")
 public class Recipes {
 
+    /** The name of the Cheese table. */
+    public static final String TABLE_NAME = "recipes";
+
     int getId;
 
     @PrimaryKey

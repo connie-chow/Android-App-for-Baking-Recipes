@@ -21,7 +21,8 @@ import static com.example.bakingapp.RecipeContract.PATH_RECIPES;
 // https://stackoverflow.com/questions/16939773/get-arraylistnamevaluepair-value-by-name
 public class RecipeFetchService extends IntentService {
 
-    public static final String ACTION_FETCH_RECIPES = "com.example.baking.action.fetch_recipes";
+    public static final String ACTION_FETCH_RECIPES = "com.example.bakingapp.action.fetch_recipes";
+    public static final String ACTION_UPDATE_PLANT_WIDGETS = "com.example.bakingapp.action.update_recipe_widgets";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -30,6 +31,11 @@ public class RecipeFetchService extends IntentService {
      */
     public RecipeFetchService(String name) {
         super(name);
+    }
+
+    public RecipeFetchService() {
+        super(null);
+
     }
 
 
@@ -59,7 +65,8 @@ public class RecipeFetchService extends IntentService {
     // you can compare the last watered time with the time now and if the difference is larger
     // than MAX_AGE_WITHOUT_WATER, then the plant is dead!
     private void handleActionWaterPlants() {
-        Uri RECIPES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
+        //Uri RECIPES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
+        Uri RECIPES_URI = RecipeContentProvider.URI_RECIPE;
         ContentValues contentValues = new ContentValues();
         long timeNow = System.currentTimeMillis();
         String recipeId = "";
@@ -81,7 +88,7 @@ public class RecipeFetchService extends IntentService {
             cursor.moveToFirst();
             int recipe_id = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_ID);
             int recipe_name = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME);
-
+// description instead of name
             final String name = cursor.getString(recipe_name);
             final String id = cursor.getString(recipe_id);
 
@@ -93,7 +100,8 @@ public class RecipeFetchService extends IntentService {
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
-        RecipeWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetIds);
+        RecipeWidgetProvider.updateRecipeWidgets(this, appWidgetManager, recipeList, appWidgetIds);
+        //Widget(this, appWidgetManager, appWidgetIds);
 
 
 
@@ -111,6 +119,12 @@ public class RecipeFetchService extends IntentService {
          */
     }
 
+
+    public static void startActionUpdatePlantWidgets(Context context) {
+        Intent intent = new Intent(context, RecipeFetchService.class);
+        intent.setAction(ACTION_FETCH_RECIPES);
+        context.startService(intent);
+    }
 
 
 }

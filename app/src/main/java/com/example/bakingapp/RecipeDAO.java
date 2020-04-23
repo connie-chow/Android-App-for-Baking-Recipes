@@ -1,5 +1,7 @@
 package com.example.bakingapp;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -84,6 +86,15 @@ public interface RecipeDAO {
     @Query("DELETE FROM ingredients")
     void deleteAllIngredients();
 
+
+    @Query("SELECT * FROM " + Recipes.TABLE_NAME)
+    Cursor selectAll();
+
+    @Query("SELECT * FROM " + Recipes.TABLE_NAME + " WHERE r_id=:id")
+    Cursor selectById(long id);
+
+    @Insert
+    long insert(Recipes recipe);
 
 }
 

@@ -12,6 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".RecipeFetchService"
+            android:exported="false">
+        </service>
         <receiver android:name=".RecipeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -33,6 +36,9 @@
         </activity>
         <activity android:name=".RecipeDetailActivity" />
         <activity android:name=".RecipeActivity" />
+        <provider
+            android:authorities="com.example.bakingapp.RecipeContentProvider"
+            android:name="com.example.bakingapp.RecipeContentProvider" />
     </application>
 
 </manifest>
