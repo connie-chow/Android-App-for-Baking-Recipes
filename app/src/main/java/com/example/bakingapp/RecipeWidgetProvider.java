@@ -23,16 +23,28 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
                                 int[] appWidgetId) {
 
         //CharSequence widgetText = context.getString(R.string.appwidget_text);
+
+        Intent intent = new Intent(context, RecipeFetchService.class);
+        //intent.setAction(RecipeFetchService.ACTION_FETCH_RECIPES);
+
+        PendingIntent pendingIntent = PendingIntent.getService(
+                context,
+                2,
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
+        views.setOnClickPendingIntent(R.id.android_me_linear_layout, pendingIntent);
 
         // create TextView element
         for (Map<String, String> recipe : recipes) {
-            String recipe_name = recipe.get("recipe_name");
-            //views.setTextViewText(R.id.appwidget_text, recipe_name);
-            RemoteViews r = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
-            r.setTextViewText(R.layout.recipe_widget, recipe_name);
-            views.addView(R.layout.recipe_widget, r);
+            //String recipe = recipe.get("recipe_name");
+            CharSequence recipe_name="nutella";
+            views.setTextViewText(R.id.appwidget_text, "nutella");
+            //RemoteViews r = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
+            //r.setTextViewText(R.layout.recipe_widget, recipe_name);
+            //views.addView(R.layout.recipe_widget, r);
 
         }
 
@@ -50,17 +62,28 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
 */
 
+        /* onclick events in Remove Views done via PendingIntents
+        Pending Intents: Wrapper for Intent and allows external applications to have access to that
+        intent and run it in your application
+        So you create an Intent to launch the MainActivity and then wrap it with a PendingIntent
+         */
 
         // Add the wateringservice click handler
-        Intent wateringIntent = new Intent(context, RecipeFetchService.class);
-        wateringIntent.setAction(RecipeFetchService.ACTION_FETCH_RECIPES);
+/*
+        Intent wateringIntent2 = new Intent(context, RecipeFetchService.class);
+        wateringIntent2.setAction(RecipeFetchService.ACTION_FETCH_RECIPES);
+        wateringIntent2.setAction("STOP");
         PendingIntent wateringPendingIntent = PendingIntent.getService(
                 context,
-                0,
-                wateringIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                1,
+                wateringIntent2,
+                PendingIntent.FLAG_CANCEL_CURRENT);
         views.setOnClickPendingIntent(R.id.widget_recipe_image, wateringPendingIntent);
+        //appWidgetManager.updateAppWidget(appWidgetId, views);
+*/
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        //https://stackoverflow.com/questions/29519632/android-widget-onclick-not-working-service-wont-start
+
 
     }
 
@@ -73,6 +96,13 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     }
 
 
+    /*
+    Called whenever the widget is installed and then called on every widget update interval,
+    interval is set in the widget_provider.xml
+    Goes through all widgets that have been added to the homescreen and updates them
+    AppWidgetManager gives access to all existing widgets on the homescreen
+    and access to update them
+     */
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
@@ -100,3 +130,5 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     }
 }
 
+// https://github.com/android/architecture-components-samples/tree/master/PersistenceContentProviderSample/app/src/main
+// Room database reading with content provider

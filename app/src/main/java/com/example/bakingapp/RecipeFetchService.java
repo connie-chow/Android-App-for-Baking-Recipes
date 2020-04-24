@@ -1,6 +1,7 @@
 package com.example.bakingapp;
 
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,6 +126,18 @@ public class RecipeFetchService extends IntentService {
         Intent intent = new Intent(context, RecipeFetchService.class);
         intent.setAction(ACTION_FETCH_RECIPES);
         context.startService(intent);
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
+        Intent fetchRecipesIntent = new Intent(context, RecipeFetchService.class);
+        fetchRecipesIntent.setAction(RecipeFetchService.ACTION_FETCH_RECIPES);
+        PendingIntent wateringPendingIntent = PendingIntent.getService(
+                context,
+                0,
+                fetchRecipesIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        views.setOnClickPendingIntent(R.id.widget_recipe_image, wateringPendingIntent);
+
+
     }
 
 
