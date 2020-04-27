@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.TextView;
@@ -19,8 +20,25 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  */
 public class RecipeWidgetProvider extends AppWidgetProvider {
 //ArrayList<Map<String, String>> recipeList,
+
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, ArrayList<Map<String, String>> recipes,
+                                int appWidgetId) {
+
+        Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+        RemoteViews rv;
+        if(width < 100) {
+            rv = getSinglePlantRemoteView(context, 0,0,true);
+        } else {
+            rv = getGardenGridRemoteView(context);
+        }
+        appWidgetManager.updateAppWidget(appWidgetId, rv);
+    }
+
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, ArrayList<Map<String, String>> recipes,
                                 int[] appWidgetId) {
+
 
         //CharSequence widgetText = context.getString(R.string.appwidget_text);
 
@@ -38,13 +56,23 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.android_me_linear_layout, pendingIntent);
 
         // create TextView element
+        String recipe_str = "", recipe_key = "";
         for (Map<String, String> recipe : recipes) {
-            //String recipe = recipe.get("recipe_name");
-            CharSequence recipe_name="nutella";
-            views.setTextViewText(R.id.appwidget_text, "nutella");
+
+            for (Map.Entry<String,String> entry : recipe.entrySet()) {
+                recipe_str = entry.getValue();
+                recipe_key = entry.getKey();
+            }
+
+            CharSequence recipe_name = new StringBuilder(recipe_str);
+            views.setTextViewText(R.id.appwidget_text, recipe_name);
+            // only lodas nutella string after add new widget
             //RemoteViews r = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
             //r.setTextViewText(R.layout.recipe_widget, recipe_name);
             //views.addView(R.layout.recipe_widget, r);
+
+
+
 
         }
 
@@ -90,7 +118,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
     public static void updateRecipeWidgets(Context context, AppWidgetManager appWidgetManager, ArrayList<Map<String, String>> recipeList, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, recipeList, appWidgetIds);
+            //updateAppWidget(context, appWidgetManager, recipeList, appWidgetIds);
+            updateAppWidget(context, appWidgetManager, recipeList, appWidgetId);
             //updateAppWidget(context, appWidgetManager, appWidgetIds);
         }
     }
@@ -115,6 +144,39 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     }
 
 
+
+    private static RemoteViews getSinglePlantRemoteView(Context context, int imgRes, long plantId, boolean showWater) {
+        Intent intent;
+        intent = new Intent(context, MainActivity.class);
+        //intent = new Intent(context, RecipeDetailActivity.class);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
+        return views;
+    }
+
+
+    private static RemoteViews getGardenGridRemoteView(Context context) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_grid_view);
+
+        // Set the GridWidgetService intent to act as the adapter for the GridView
+        Intent intent = new Intent(context, GridWidgetService.class);
+        views.setRemoteAdapter(R.id.widget_grid_view, intent);
+
+        Intent appIntent = new Intent(context, RecipeDetailActivity.class);
+        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.widget_grid_view, appPendingIntent);
+        views.setEmptyView(R.id.widget_grid_view, R.id.empty_view);
+        return views;
+    }
+
+
+    /*
+    Called everytime dimension of the widget is changed
+     */
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        RecipeFetchService.startActionUpdatePlantWidgets(context);
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+    }
 
 
     @Override

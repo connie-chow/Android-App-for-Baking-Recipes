@@ -85,9 +85,9 @@ public class RecipeFetchService extends IntentService {
         ArrayList<Map<String, String>> recipeList = new ArrayList<>();  //HashMap<>();
 
         //Extract the recipes
-        if(cursor != null && cursor.getCount() > 0) {
+        while(cursor.moveToNext()) {
 
-            cursor.moveToFirst();
+            //cursor.moveToFirst();
             int recipe_id = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_ID);
             int recipe_name = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME);
 // description instead of name
@@ -97,11 +97,17 @@ public class RecipeFetchService extends IntentService {
             Map<String, String> entry = new HashMap<>();
             entry.put(id, name);
             recipeList.add(entry);
-            cursor.close();
+
         }
 
+        cursor.close();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
+
+        // Trigger data update to handle the GridView widgets and force a data refresh
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
+
+
         RecipeWidgetProvider.updateRecipeWidgets(this, appWidgetManager, recipeList, appWidgetIds);
         //Widget(this, appWidgetManager, appWidgetIds);
 
