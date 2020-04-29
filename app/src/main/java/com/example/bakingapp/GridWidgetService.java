@@ -41,11 +41,21 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     // called on start and when onNotifyAppWidgetViewDataChanged  is called
     @Override
     public void onDataSetChanged() {
-        Uri URL = BASE_CONTENT_URI.buildUpon().appendPath(String.valueOf(RecipeContentProvider.URI_RECIPE)).build();
+        Uri RECIPES_URI = RecipeContentProvider.URI_RECIPE;
+
+        //Uri URL = BASE_CONTENT_URI.buildUpon().appendPath(String.valueOf(RecipeContentProvider.URI_RECIPE)).build();
         if (mCursor != null) {
             mCursor.close();
         }
-        mCursor = mContext.getContentResolver().query(URL, null, null, null, null);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                RECIPES_URI,
+                null,
+                null,
+                null,
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_ID
+        );
+        //mCursor = mContext.getContentResolver().query(RECIPES_URI, null, null, null, null);
     }
 
 
