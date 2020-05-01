@@ -133,6 +133,7 @@ public class RecipeFetchService extends IntentService {
         intent.setAction(ACTION_FETCH_RECIPES);
         context.startService(intent);
 
+        /*
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
         Intent fetchRecipesIntent = new Intent(context, RecipeFetchService.class);
         fetchRecipesIntent.setAction(RecipeFetchService.ACTION_FETCH_RECIPES);
@@ -142,7 +143,7 @@ public class RecipeFetchService extends IntentService {
                 fetchRecipesIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
         views.setOnClickPendingIntent(R.id.widget_recipe_image, wateringPendingIntent);
-
+*/
 
     }
 

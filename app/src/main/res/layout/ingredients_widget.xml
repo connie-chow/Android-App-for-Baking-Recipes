@@ -23,6 +23,7 @@
         android:background="#09C"
         android:textColor="#ffffff"
         android:textSize="24dp"
+        android:text="ingredient_view"
         android:textStyle="bold|italic" />
 
     <!-- android:contentDescription="@string/appwidget_text"

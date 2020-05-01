@@ -34,6 +34,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
+        // https://stackoverflow.com/questions/24603838/gridview-in-android-widgets
 
     }
 
@@ -60,7 +61,9 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 
     @Override
-    public void onDestroy() { mCursor.close(); }
+    public void onDestroy() {
+        mCursor.close();
+    }
 
 
     @Override
@@ -91,21 +94,22 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getLoadingView() {
+
         return null;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 }
