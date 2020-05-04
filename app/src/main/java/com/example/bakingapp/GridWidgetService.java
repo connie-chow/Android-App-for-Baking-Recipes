@@ -36,6 +36,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onCreate() {
         // https://stackoverflow.com/questions/24603838/gridview-in-android-widgets
 
+
     }
 
 
@@ -77,7 +78,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         if(mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToPosition(position);
-        int idIndex = mCursor.getColumnIndex("recipe_name");
+        int idIndex = mCursor.getColumnIndex("name");
 
         long plantId = mCursor.getLong(idIndex);
 

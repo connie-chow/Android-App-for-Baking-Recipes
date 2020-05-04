@@ -40,7 +40,10 @@
         <activity android:name=".RecipeActivity" />
         <provider
             android:authorities="com.example.bakingapp.RecipeContentProvider"
-            android:name="com.example.bakingapp.RecipeContentProvider" />
+            android:name="com.example.bakingapp.RecipeContentProvider"
+            android:exported="true"/>
+        <!-- Permission Denial: reading com.example.bakingapp.RecipeContentProvider uri requires the provider be exported, or grantUriPermission() -->
+        <!-- provider needs to be exported -->
     </application>
 
 </manifest>
