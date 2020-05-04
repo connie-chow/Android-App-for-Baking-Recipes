@@ -50,7 +50,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             mCursor.close();
         }
 
-        Cursor cursor = mContext.getContentResolver().query(
+        mCursor = mContext.getContentResolver().query(
                 RECIPES_URI,
                 null,
                 null,
