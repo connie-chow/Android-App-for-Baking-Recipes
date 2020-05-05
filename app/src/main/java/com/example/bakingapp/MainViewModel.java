@@ -62,6 +62,8 @@ public class MainViewModel extends AndroidViewModel {
         return mRecipes;
     }
 
-
+    public void deleteAll() {
+        mRepo.deleteAll();
+    }
 }
 

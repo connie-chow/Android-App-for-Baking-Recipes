@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
 /////////////////////////////////////////////////////////
         // Get a new or existing ViewModel from the ViewModelProvider.
         MainViewModel mRecipesViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        //mRecipesViewModel.deleteAll();
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
@@ -282,6 +283,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //mRecipesViewModel.deleteAll();
+    }
 
 
 

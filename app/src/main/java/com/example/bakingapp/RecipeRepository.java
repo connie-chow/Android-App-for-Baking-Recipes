@@ -67,6 +67,11 @@ public class RecipeRepository {
     }
 
 
+    public void deleteAll() {
+        mDb.recipeDAO().deleteAll();
+    }
+
+
     LiveData<Steps> getRecipeStepDetails(String recipe_id, String step_id) {
         mRecipeStepDetails = mDb.recipeDAO().getRecipeStepDetails(recipe_id, step_id);
         return mRecipeStepDetails;
