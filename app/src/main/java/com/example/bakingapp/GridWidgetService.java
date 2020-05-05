@@ -100,6 +100,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         //views.setVisibility(R.id.widget_water_button, View.GONE);
 
         // fill in the onClick PendingIntent Template using the specific plant Id for each item individually
+        // fill with recipe ID to retrieve the ingredient
         Bundle extras = new Bundle();
         extras.putString("id", id);
         Intent fillInIntent = new Intent();

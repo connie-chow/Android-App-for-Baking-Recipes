@@ -10,6 +10,9 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "ingredients", primaryKeys = {"r_id","i_id"})
 public class Ingredients {
 
+    public static final String TABLE_NAME = "ingredients";
+
+
     int getId;
 
     @ColumnInfo

@@ -34,6 +34,10 @@ public class RecipeContentProvider extends ContentProvider {
     public static final Uri URI_RECIPE = Uri.parse(
             "content://" + AUTHORITY + "/" + Recipes.TABLE_NAME);
 
+    public static final Uri URI_INGREDIENTS = Uri.parse(
+            "content://" + AUTHORITY + "/" + Ingredients.TABLE_NAME);
+
+
     /** The match code for some items in the Recipes table. */
     private static final int CODE_CHEESE_DIR = 1;
 

@@ -24,6 +24,7 @@ import static com.example.bakingapp.RecipeContract.PATH_RECIPES;
 public class RecipeFetchService extends IntentService {
 
     public static final String ACTION_FETCH_RECIPES = "com.example.bakingapp.action.fetch_recipes";
+    public static final String ACTION_FETCH_INGREDIENTS = "com.example.bakingapp.action.fetch_ingredients";
     public static final String ACTION_UPDATE_PLANT_WIDGETS = "com.example.bakingapp.action.update_recipe_widgets";
 
     /**
@@ -57,9 +58,62 @@ public class RecipeFetchService extends IntentService {
             final String action = intent.getAction();
             if (ACTION_FETCH_RECIPES.equals(action)) {
                 handleActionWaterPlants();
+            } else if(ACTION_FETCH_INGREDIENTS.equals(action)) {
+                handleActionFetchIngredients();
             }
         }
     }
+
+
+
+    private void handleActionFetchIngredients() {
+        Uri RECIPES_URI = RecipeContentProvider.URI_INGREDIENTS;
+        ContentValues contentValues = new ContentValues();
+        long timeNow = System.currentTimeMillis();
+        String recipeId = "";
+
+        Cursor cursor = getContentResolver().query(
+                RECIPES_URI,
+                null,
+                null,
+                null,
+                RecipeContract.RecipeEntry.COLUMN_RECIPE_ID
+        );
+
+
+        ArrayList<Map<String, String>> recipeList = new ArrayList<>();  //HashMap<>();
+
+        //Extract the recipes
+        while(cursor.moveToNext()) {
+
+            //cursor.moveToFirst();
+            int recipe_id = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_ID);
+            int ingredient_name = cursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_INGREDIENT);
+
+            final String name = cursor.getString(ingredient_name);
+            final String id = cursor.getString(recipe_id);
+
+            Map<String, String> entry = new HashMap<>();
+            entry.put(id, name);
+            recipeList.add(entry);
+
+        }
+
+        cursor.close();
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
+
+        // Trigger data update to handle the GridView widgets and force a data refresh
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
+
+
+        RecipeWidgetProvider.updateRecipeWidgets(this, appWidgetManager, recipeList, appWidgetIds);
+        //Widget(this, appWidgetManager, appWidgetIds);
+
+
+    }
+
+
 
 
     // To water all plants we just run an update query setting the last watered time to now,

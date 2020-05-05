@@ -13,6 +13,7 @@ public class RecipeContract {
     // Define the possible paths for accessing data in this contract
     // This is the path for the "plants" directory
     public static final String PATH_RECIPES = "recipes";
+    public static final String PATH_INGREDIENTS = "ingredients";
 
     public static final long INVALID_PLANT_ID = -1;
 
@@ -25,6 +26,7 @@ public class RecipeContract {
         public static final String TABLE_NAME = "recipes";
         public static final String COLUMN_RECIPE_ID = "r_id";
         public static final String COLUMN_RECIPE_NAME = "name";
+        public static final String COLUMN_INGREDIENT = "ingredient";
         //public static final String COLUMN_CREATION_TIME = "createdAt";
         //public static final String COLUMN_LAST_WATERED_TIME = "lastWateredAt";
     }

@@ -168,11 +168,15 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         GridRemoteViewsFactory mViewsFactory = new GridRemoteViewsFactory(context);
 
         // Set the GridWidgetService intent to act as the adapter for the GridView
+
         Intent intent = new Intent(context, GridWidgetService.class);
         views.setRemoteAdapter(R.id.widget_grid_view, intent);
-
+        /*
         Intent appIntent = new Intent(context, RecipeActivity.class);
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 2, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+*/
+        Intent intent2 = new Intent(context, RecipeFetchService.class);
+        PendingIntent appPendingIntent = PendingIntent.getService(context, 0, intent2,0);
         views.setPendingIntentTemplate(R.id.widget_grid_view, appPendingIntent);
         views.setEmptyView(R.id.widget_grid_view, R.id.empty_view);
         return views;
