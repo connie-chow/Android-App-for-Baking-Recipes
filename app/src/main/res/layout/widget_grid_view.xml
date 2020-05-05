@@ -7,10 +7,10 @@
     <GridView
         android:id="@+id/widget_grid_view"
         android:layout_width="match_parent"
-        android:background="@android:color/holo_green_dark"
+        android:background="@android:color/white"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:numColumns="4"/>
+        android:numColumns="2"/>
 
     <RelativeLayout
         android:id="@+id/empty_view"
@@ -26,11 +26,12 @@
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold"/>
+        <!--
         <ImageView
             android:alpha="0.2"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/cheesecake_thumbnail"/>
+            android:src="@drawable/cheesecake_thumbnail"/>-->
     </RelativeLayout>
 
 

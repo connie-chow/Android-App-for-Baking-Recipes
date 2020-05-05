@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -76,19 +77,34 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
+
         if(mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToPosition(position);
-        int idIndex = mCursor.getColumnIndex("name");
 
-        long plantId = mCursor.getLong(idIndex);
+        int recipe_id = mCursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_ID);
+        int recipe_name = mCursor.getColumnIndex(RecipeContract.RecipeEntry.COLUMN_RECIPE_NAME);
+        final String name = mCursor.getString(recipe_name);
+        final String id = mCursor.getString(recipe_id);
+
+        //int idIndex = mCursor.getColumnIndex("name");
+        //long plantId = mCursor.getLong(idIndex);
 
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget);
 
         // update plant image
         //int imgRes = PlantUtils.getPlantImageRes(mContext, timeNow - createdAt, timeNow - wateredAt, plantType);
         //views.setImageViewResource(R.id.widget_plant_image, imgRes);
-        views.setTextViewText(R.id.appwidget_text, String.valueOf(plantId));
+        //views.setTextViewText(R.id.appwidget_text, String.valueOf(plantId));
+        views.setTextViewText(R.id.appwidget_text, name);
+        views.setViewVisibility(R.id.widget_recipe_image, View.GONE);
         //views.setVisibility(R.id.widget_water_button, View.GONE);
+
+        // fill in the onClick PendingIntent Template using the specific plant Id for each item individually
+        Bundle extras = new Bundle();
+        extras.putString("id", id);
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+        views.setOnClickFillInIntent(R.id.appwidget_text, fillInIntent);
 
         return views;
     }

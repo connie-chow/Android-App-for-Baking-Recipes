@@ -171,7 +171,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         Intent intent = new Intent(context, GridWidgetService.class);
         views.setRemoteAdapter(R.id.widget_grid_view, intent);
 
-        Intent appIntent = new Intent(context, RecipeDetailActivity.class);
+        Intent appIntent = new Intent(context, RecipeActivity.class);
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 2, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.widget_grid_view, appPendingIntent);
         views.setEmptyView(R.id.widget_grid_view, R.id.empty_view);
