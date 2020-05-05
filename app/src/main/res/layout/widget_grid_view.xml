@@ -10,7 +10,7 @@
         android:background="@android:color/white"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:numColumns="2"/>
+        android:numColumns="1"/>
 
     <RelativeLayout
         android:id="@+id/empty_view"
