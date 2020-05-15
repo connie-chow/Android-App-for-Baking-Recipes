@@ -1,5 +1,4 @@
 # BakingApp
-Initial Commit
 
 App that loads Video Baking Recipes
 
